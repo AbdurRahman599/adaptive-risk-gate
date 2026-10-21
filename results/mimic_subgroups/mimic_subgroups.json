@@ -1,0 +1,21 @@
+{
+  "groups": [
+    "age 40-64",
+    "age<40",
+    "age>=65",
+    "race=ASIAN",
+    "race=BLACK",
+    "race=HISPANIC",
+    "race=OTHER/UNKNOWN",
+    "race=WHITE",
+    "sex=F",
+    "sex=M"
+  ],
+  "configs": 80,
+  "point_target_met": 77,
+  "upper_bound_met": 64,
+  "auroc_range": [
+    0.7788465984738702,
+    0.8583249961240081
+  ]
+}

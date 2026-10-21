@@ -1,0 +1,10 @@
+# Versions are not pinned: the notebooks were run on Google Colab. Pin to your environment (pip freeze) before release.
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+torch
+pillow
+huggingface_hub
+threadpoolctl

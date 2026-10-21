@@ -1,0 +1,36 @@
+claim,evidence,supported
+"Finite-sample guarantee holds out of sample (cross-fit, primary scenario)",72/72 gate configurations kept realised risk <= alpha,True
+Guarantee confirmed on untouched fresh patients,"8/8 full-gate targets met (2,000 patients)",True
+RQ1: full 5-signal gate needs less workload than the binary baseline at equal guaranteed risk,Holm-adjusted verdicts across 8 targets: {'inconclusive': 8},False
+RQ1 component: D adds to U,Holm-adjusted verdicts: {'inconclusive': 8},False
+RQ1 component: M adds to U+D,"Holm-adjusted verdicts: {'inconclusive': 7, 'better': 1}",False
+RQ1 component: S adds to U+D+M,"Holm-adjusted verdicts: {'inconclusive': 7, 'worse': 1}",False
+RQ2: ASK-CONTEXT lowers cost at the primary budget,"delta cost -0.00009 [-0.00025, +0.00008]",False
+RQ2: ASK-LATERAL lowers cost at the primary budget,"delta cost -0.00000 [-0.00001, -0.00000]",True
+RQ2: both Ask actions lowers cost at the primary budget,"delta cost -0.00009 [-0.00025, +0.00007]",False
+RQ2: ASK-CONTEXT lowers workload at equal guaranteed risk,"Holm-adjusted verdicts: {'inconclusive': 6, 'worse': 1, 'better': 1}",False
+"Cost-aware Ask beats cost-unaware ""ask whenever context is missing"" at the same workload","binary_UDMS: -0.00383 [-0.00481,-0.00288]; ask_both_UDMS: -0.00393 [-0.00486,-0.00300]",True
+ASK-CONTEXT pays off somewhere in the assumed cost grid,15/30 cells,True
+ASK-LATERAL pays off somewhere in the assumed cost grid,2/6 cells,True
+ASK-CONTEXT result holds in every deployment scheme (incl. the held-out structured-masking scheme),natural: inconclusive; mcar30: inconclusive; mcar60: inconclusive; struct40: better,False
+ASK-CONTEXT confirmed on untouched fresh patients,"delta cost -0.00000 [-0.00020, +0.00021]; ask rate 1.5%",False
+PRIMARY ENDPOINT (pooled cross-fit): Full gate vs binary baseline at fn target 0.03,"referral -0.0028 [-0.0075, +0.0018], Holm p=1.000; = 2.8 fewer escalations per 1,000 patients",False
+PRIMARY ENDPOINT on untouched fresh patients,"referral -0.0014 [-0.0058, +0.0028], Holm p=1.000",False
+Full gate vs a learning-to-defer surrogate-loss baseline (Madras/Mozannar-Sontag style),"Holm-adjusted verdicts: {'better': 7, 'inconclusive': 1}",True
+Stable across 3 independent fold assignments,"full-vs-binary referral change at the primary target: mean -0.0001, sd 0.0028; same sign in all seeds: False",False
+Guarantee survives a change of labeler (NegBio),16/16 met after recalibration; 16/16 met if the gate keeps its CheXpert calibration,True
+"Asking for the missing context FIRST, then gating, lowers workload at equal guaranteed risk",verdicts: {'worse': 8}; break-even cost of one context request = 0.000 of a full review (median over targets),False
+"EXTERNAL dataset (NIH ChestX-ray14, 6,000 patients, 8 shared labels): guarantee holds",6/6 full-gate targets met with MIMIC calibration unchanged; 6/6 after recalibrating only the threshold; image-only macro AUROC 0.751,True
+EXTERNAL dataset: full gate needs fewer escalations than the uncertainty-only gate,"Holm-adjusted verdicts: {'worse': 3, 'better': 2, 'inconclusive': 1}",False
+"Per-critical-finding risk guarantees (Edema, Consolidation, Pneumonia, Pneumothorax) hold simultaneously",4/4 union-gate and 4/4 shared-threshold configurations met all four targets; realised risk was on average 28% of the target (conservative); escalation 33%-60%,True
+A single shared threshold meets all per-finding targets with fewer escalations than a union of per-finding gates,"target 0.75: union minus shared +0.076 [+0.068, +0.084]; target 0.5: union minus shared +0.068 [+0.060, +0.075]",True
+Per-finding guarantees: full signal set needs fewer escalations than uncertainty alone,"Holm-adjusted verdicts: {'inconclusive': 3, 'worse': 1}",False
+Ensemble-disagreement signal E: All signals incl. E vs U,Holm-adjusted verdicts: {'inconclusive': 8},False
+Ensemble-disagreement signal E: E adds to U,"Holm-adjusted verdicts: {'inconclusive': 7, 'better': 1}",False
+Ensemble-disagreement signal E: E adds to U+D+M+S,Holm-adjusted verdicts: {'inconclusive': 8},False
+Second labeler (NegBio) agrees closely with CheXpert on the evaluation patients,"macro Cohen kappa 0.983 on 5,994 patients (both rule-based labelers: NOT an independent reference standard)",True
+EXTERNAL subgroup audit (NIH sex and age): risk targets hold in every subgroup,point estimate within target in 60/60 subgroup configurations; upper 95% bound within target in 45/60; 2/12 subgroup risk gaps had an interval excluding zero,True
+RQ3 (simulation only): workload-aware thresholds reduce harm at equal volume,9/18 simulated settings,False
+Signal 2 stress test: mismatched clinical context is detectable,detection AUROC 0.628 (0.5 = chance),True
+Signal 3 under withheld context: gate predicts when asking helps (held-out structured scheme),"corr(predicted gain, true gain) = 0.188",False
+Signal 1: conformal sets reach nominal coverage,0 labels with upper CI below nominal,True

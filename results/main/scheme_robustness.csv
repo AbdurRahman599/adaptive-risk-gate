@@ -1,0 +1,5 @@
+scheme,guarantee_ok,rq1_full_vs_binary,ask_context_budget_cost,ask_context_verdict,ask_both_verdict,ask_context_guarantee_workload,ask_context_rate
+natural,72/72,"{'inconclusive': 7, 'worse': 1}","+0.00000 [+0.00000,+0.00000]",inconclusive,better,{'inconclusive': 8},0.0
+mcar30,72/72,"{'inconclusive': 7, 'better': 1}","-0.00009 [-0.00025,+0.00008]",inconclusive,inconclusive,"{'inconclusive': 6, 'worse': 1, 'better': 1}",0.012012012012012012
+mcar60,72/72,"{'inconclusive': 4, 'better': 3, 'worse': 1}","+0.00004 [-0.00025,+0.00036]",inconclusive,inconclusive,"{'worse': 5, 'inconclusive': 2, 'better': 1}",0.021021021021021023
+struct40,72/72,"{'inconclusive': 6, 'worse': 2}","-0.00027 [-0.00044,-0.00010]",better,inconclusive,"{'worse': 5, 'inconclusive': 2, 'better': 1}",0.019185852519185854

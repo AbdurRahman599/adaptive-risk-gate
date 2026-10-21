@@ -1,0 +1,2108 @@
+{
+  "answer_all_primary_scheme": {
+    "answer_all_fn": 0.050539428317206106,
+    "answer_all_severe": 0.13179846513179846,
+    "answer_all_fp": 0.016977036421480865
+  },
+  "classifier": {
+    "macro_auroc_image_only": 0.7757740524211304,
+    "macro_auroc_with_context": 0.8347923934284988,
+    "macro_gain_context": 0.05866382654924427,
+    "macro_gain_lateral": 0.010193744593274759,
+    "macro_ece_with_context": 0.012466367069921852
+  },
+  "value_of_information": {
+    "context": {
+      "mean": 0.003793080906241007,
+      "lo": 0.0028262729726267035,
+      "hi": 0.004730713963320836,
+      "n": 5965,
+      "p": 0.0003999200159968006,
+      "sd": 0.03787257130855002,
+      "mde80": 0.001373022326584174
+    },
+    "lateral": {
+      "mean": 5.70252792475016e-05,
+      "lo": -0.0007559910048798937,
+      "hi": 0.0008573236639903296,
+      "n": 4050,
+      "p": 0.860627874425115,
+      "sd": 0.026899524928252594,
+      "mde80": 0.0011835187147755369
+    },
+    "answer_all_cost_image_only": 0.07024229190895859,
+    "answer_all_cost_with_context": 0.06643995255106366
+  },
+  "conformal": {
+    "labels_all_group_upper_ci_below_nominal": 0,
+    "labels_positive_class_upper_ci_below_nominal": 0,
+    "positive_class_labels_assessed": 14,
+    "mean_set_size_all": 1.453047422716456
+  },
+  "guarantee_internal": {
+    "configurations": 72,
+    "realised_le_alpha": 72,
+    "mean_folds_within_target": 0.9699074074074073,
+    "worst_overshoot": -0.005663441218996774
+  },
+  "ask_missing_then_gate": {
+    "budget": [
+      {
+        "budget": 0.1,
+        "delta_vs_binary_UDMS": 0.005289618345173902,
+        "lo": 0.004219580541802765,
+        "hi": 0.006370898152148152,
+        "verdict": "worse"
+      },
+      {
+        "budget": 0.2,
+        "delta_vs_binary_UDMS": 0.00430621272287939,
+        "lo": 0.0034330273788607127,
+        "hi": 0.0052033152637319295,
+        "verdict": "worse"
+      },
+      {
+        "budget": 0.3,
+        "delta_vs_binary_UDMS": 0.0030769209935876613,
+        "lo": 0.0023931743035909706,
+        "hi": 0.003775810534143868,
+        "verdict": "worse"
+      },
+      {
+        "budget": 0.4,
+        "delta_vs_binary_UDMS": 0.002511761206205651,
+        "lo": 0.001907464413019969,
+        "hi": 0.003151320169375725,
+        "verdict": "worse"
+      }
+    ],
+    "guarantee": [
+      {
+        "harm": "fn",
+        "alpha": 0.01,
+        "delta_workload": 0.03850517183850515,
+        "lo": 0.03283262429095761,
+        "hi": 0.04408575241908573,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.02,
+        "delta_workload": 0.03283283283283282,
+        "lo": 0.02761928595261928,
+        "hi": 0.03819673840507173,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "delta_workload": 0.03633633633633633,
+        "lo": 0.031097555889222552,
+        "hi": 0.041659159159159145,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.04,
+        "delta_workload": 0.043009676343009666,
+        "lo": 0.03794607107107107,
+        "hi": 0.04824115782449114,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.05,
+        "delta_workload": 0.029996663329996655,
+        "lo": 0.02429074908241574,
+        "hi": 0.03569465298631964,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0007726269315672801
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.1,
+        "delta_workload": 0.044344344344344346,
+        "lo": 0.039806473139806474,
+        "hi": 0.04881548214881549,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.15,
+        "delta_workload": 0.04184184184184185,
+        "lo": 0.03917250583917251,
+        "hi": 0.04453620286953621,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.2,
+        "delta_workload": 0.04501167834501169,
+        "lo": 0.04325137637637639,
+        "hi": 0.04687187187187188,
+        "verdict": "worse",
+        "break_even_request_workload": 0.0
+      }
+    ]
+  },
+  "rq1_full_vs_binary_referral": [
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "delta_referral": 0.00333667000333667,
+      "lo": -0.0008341675008341675,
+      "hi": 0.0075075075075075074,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "delta_referral": 0.003670337003670337,
+      "lo": -0.0005005005005005005,
+      "hi": 0.007841174507841175,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "delta_referral": -0.0028361695028361693,
+      "lo": -0.0075075075075075074,
+      "hi": 0.0018351685018351686,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "delta_referral": -0.000667334000667334,
+      "lo": -0.006172839506172839,
+      "hi": 0.004838171504838172,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "delta_referral": -0.007340674007340674,
+      "lo": -0.01284617951284618,
+      "hi": -0.002002002002002002,
+      "verdict": "better"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "delta_referral": -0.002002002002002002,
+      "lo": -0.00667334000667334,
+      "hi": 0.002669336002669336,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "delta_referral": -0.000667334000667334,
+      "lo": -0.003003003003003003,
+      "hi": 0.0015015015015015015,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "delta_referral": 0.000333667000333667,
+      "lo": -0.0005005005005005005,
+      "hi": 0.0011678345011678344,
+      "verdict": "inconclusive"
+    }
+  ],
+  "ask_primary_budget": {
+    "context": {
+      "delta": -8.958735903180348e-05,
+      "lo": -0.0002464270738229071,
+      "hi": 7.518373952401722e-05,
+      "verdict": "inconclusive"
+    },
+    "lateral": {
+      "delta": -3.378017822462264e-06,
+      "lo": -6.389814723148049e-06,
+      "hi": -9.985565541121074e-07,
+      "verdict": "better"
+    },
+    "both": {
+      "delta": -9.240084406751073e-05,
+      "lo": -0.00024980268814296593,
+      "hi": 7.289949366338256e-05,
+      "verdict": "inconclusive"
+    }
+  },
+  "ask_rates_primary": {
+    "context": 0.012012012012012012,
+    "lateral": 0.0021688355021688356
+  },
+  "rq1_budget_cost": [
+    {
+      "budget": 0.1,
+      "delta": 0.00018352646130423905,
+      "lo": -0.0003669663405774517,
+      "hi": 0.000732030792447459,
+      "verdict": "inconclusive"
+    },
+    {
+      "budget": 0.2,
+      "delta": 0.000826015270459715,
+      "lo": 0.0003193874429985541,
+      "hi": 0.0013518599414432738,
+      "verdict": "worse"
+    },
+    {
+      "budget": 0.3,
+      "delta": 3.7387815165593483e-06,
+      "lo": -0.0004302298330076109,
+      "hi": 0.0004369393202726531,
+      "verdict": "inconclusive"
+    },
+    {
+      "budget": 0.4,
+      "delta": -0.000352304685638019,
+      "lo": -0.0008312614659836883,
+      "hi": 0.00010534249145360231,
+      "verdict": "inconclusive"
+    }
+  ],
+  "bodhi_proxy": [
+    {
+      "reference": "ask whenever context missing (cost-unaware)",
+      "matched_workload": 0.04534534534534536,
+      "policy": "binary_UDMS",
+      "delta_cost_vs_reference": -0.0038337837754504416,
+      "lo": -0.004810623898297508,
+      "hi": -0.002881721858423248,
+      "verdict": "better"
+    },
+    {
+      "reference": "ask whenever context missing (cost-unaware)",
+      "matched_workload": 0.04534534534534536,
+      "policy": "ask_both_UDMS",
+      "delta_cost_vs_reference": -0.003926729676729677,
+      "lo": -0.004864389468868636,
+      "hi": -0.003000989434531102,
+      "verdict": "better"
+    }
+  ],
+  "ask_at_guarantee": [
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "variant": "ask_context",
+      "delta_workload": 0.0012262262262262263,
+      "lo": -0.0006258341675008342,
+      "hi": 0.00303636970303637,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "variant": "ask_lateral",
+      "delta_workload": -0.00027527527527527524,
+      "lo": -0.0007624290957624291,
+      "hi": 9.009009009009009e-05,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "variant": "ask_both",
+      "delta_workload": 0.0010927594260927598,
+      "lo": -0.0007992575909242576,
+      "hi": 0.0029147063730397046,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "variant": "ask_context",
+      "delta_workload": 0.0010844177510844178,
+      "lo": -0.001017684351017684,
+      "hi": 0.0032282282282282285,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "variant": "ask_lateral",
+      "delta_workload": 3.50350350350351e-05,
+      "lo": -0.0006906906906906905,
+      "hi": 0.0007023690357023692,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "variant": "ask_both",
+      "delta_workload": 0.001434768101434768,
+      "lo": -0.0007342759426092753,
+      "hi": 0.0036704204204204196,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "variant": "ask_context",
+      "delta_workload": 0.00025859192525859226,
+      "lo": -0.0007590924257590921,
+      "hi": 0.0011597013680346988,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "variant": "ask_lateral",
+      "delta_workload": 0.0002652652652652653,
+      "lo": -0.00026693360026693356,
+      "hi": 0.0007608858858858842,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "variant": "ask_both",
+      "delta_workload": 0.0004337671004337674,
+      "lo": -0.0007057057057057053,
+      "hi": 0.0014698865532198858,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "variant": "ask_context",
+      "delta_workload": -0.00013346680013346662,
+      "lo": -0.0012097514180847513,
+      "hi": 0.0007757757757757761,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "variant": "ask_lateral",
+      "delta_workload": 0.0001034367701034368,
+      "lo": -0.00023023023023023022,
+      "hi": 0.00037370704037370707,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "variant": "ask_both",
+      "delta_workload": -3.0030030030029853e-05,
+      "lo": -0.0011444778111444774,
+      "hi": 0.0009426926926926917,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "variant": "ask_context",
+      "delta_workload": 0.003787120453787121,
+      "lo": 0.001985318651985319,
+      "hi": 0.0056389723056389715,
+      "verdict": "worse"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "variant": "ask_lateral",
+      "delta_workload": 0.0004904904904904906,
+      "lo": -8.675342008675335e-05,
+      "hi": 0.001036036036036036,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "variant": "ask_both",
+      "delta_workload": 0.004137470804137472,
+      "lo": 0.0022589255922589257,
+      "hi": 0.006096096096096096,
+      "verdict": "worse"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "variant": "ask_context",
+      "delta_workload": -0.0024441107774441106,
+      "lo": -0.003962504170837504,
+      "hi": -0.001126126126126126,
+      "verdict": "better"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "variant": "ask_lateral",
+      "delta_workload": -3.169836503169836e-05,
+      "lo": -0.0003211127794461125,
+      "hi": 0.00018018018018018018,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "variant": "ask_both",
+      "delta_workload": -0.0024758091424758088,
+      "lo": -0.003998998998998999,
+      "hi": -0.0011227894561227892,
+      "verdict": "better"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "variant": "ask_context",
+      "delta_workload": 0.00025025025025025046,
+      "lo": -0.0007340674007340672,
+      "hi": 0.0011094427761094432,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "variant": "ask_lateral",
+      "delta_workload": 4.5045045045045046e-05,
+      "lo": 0.0,
+      "hi": 0.00013513513513513514,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "variant": "ask_both",
+      "delta_workload": 0.00029529529529529554,
+      "lo": -0.0006974474474474472,
+      "hi": 0.0011761761761761764,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "variant": "ask_context",
+      "delta_workload": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "variant": "ask_lateral",
+      "delta_workload": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "verdict": "inconclusive"
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "variant": "ask_both",
+      "delta_workload": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "verdict": "inconclusive"
+    }
+  ],
+  "ask_context_guarantee_counts": {
+    "inconclusive": 6,
+    "worse": 1,
+    "better": 1
+  },
+  "ask_break_even": {
+    "context": {
+      "cells": 30,
+      "ask_better": 15,
+      "ask_worse": 1
+    },
+    "lateral": {
+      "cells": 6,
+      "ask_better": 2,
+      "ask_worse": 1
+    }
+  },
+  "rq1_ranking": [
+    {
+      "metric": "auroc",
+      "a": 0.7882764231992916,
+      "b": 0.7862221368178325,
+      "delta": -0.002054286381459103,
+      "lo": -0.005220881326576829,
+      "hi": 0.0014784468602244633
+    },
+    {
+      "metric": "auprc",
+      "a": 0.3553333222013426,
+      "b": 0.35231914646011514,
+      "delta": -0.003014175741227476,
+      "lo": -0.013037470684263305,
+      "hi": 0.00729423374959525
+    }
+  ],
+  "stress_mismatch": {
+    "detection_auroc": {
+      "D signal (mean JS divergence)": 0.6276565896366264,
+      "U-only gate score": 0.509831651994891,
+      "Full gate score": 0.5182375835256685
+    },
+    "matched_fn": 0.04945976455410418,
+    "mismatched_fn": 0.056531204644412206,
+    "escalation_at_matched_70pct_threshold": [
+      {
+        "gate": "U",
+        "matched_escalation": 0.3003,
+        "mismatched_escalation": 0.2938
+      },
+      {
+        "gate": "UD",
+        "matched_escalation": 0.3003,
+        "mismatched_escalation": 0.3016
+      },
+      {
+        "gate": "UDM",
+        "matched_escalation": 0.3003,
+        "mismatched_escalation": 0.2981
+      },
+      {
+        "gate": "UDMS",
+        "matched_escalation": 0.3003,
+        "mismatched_escalation": 0.3033
+      }
+    ]
+  },
+  "signal3": [
+    {
+      "scheme": "natural",
+      "context_available": 0.9951618284951619,
+      "answer_all_fn": 0.0496652207763319,
+      "answer_all_cost": 0.0664675625786737,
+      "ask_context_would_help": null,
+      "predicted_gain_corr": null
+    },
+    {
+      "scheme": "mcar30",
+      "context_available": 0.6928595261928595,
+      "answer_all_fn": 0.050539428317206106,
+      "answer_all_cost": 0.06751646473868697,
+      "ask_context_would_help": 0.003469712774348536,
+      "predicted_gain_corr": 0.14187584442248527
+    },
+    {
+      "scheme": "mcar60",
+      "context_available": 0.4020687354020687,
+      "answer_all_fn": 0.051155600044488936,
+      "answer_all_cost": 0.06849906738795629,
+      "ask_context_would_help": 0.0034252713999549447,
+      "predicted_gain_corr": 0.1523682344215526
+    },
+    {
+      "scheme": "struct40",
+      "context_available": 0.36920253586920254,
+      "answer_all_fn": 0.050500500500500506,
+      "answer_all_cost": 0.06730034507812287,
+      "ask_context_would_help": 0.0013304099951221488,
+      "predicted_gain_corr": 0.18777770083418585
+    }
+  ],
+  "scheme_robustness": [
+    {
+      "scheme": "natural",
+      "guarantee_ok": "72/72",
+      "rq1_full_vs_binary": "{'inconclusive': 7, 'worse': 1}",
+      "ask_context_budget_cost": "+0.00000 [+0.00000,+0.00000]",
+      "ask_context_verdict": "inconclusive",
+      "ask_both_verdict": "better",
+      "ask_context_guarantee_workload": "{'inconclusive': 8}",
+      "ask_context_rate": "0.0"
+    },
+    {
+      "scheme": "mcar30",
+      "guarantee_ok": "72/72",
+      "rq1_full_vs_binary": "{'inconclusive': 7, 'better': 1}",
+      "ask_context_budget_cost": "-0.00009 [-0.00025,+0.00008]",
+      "ask_context_verdict": "inconclusive",
+      "ask_both_verdict": "inconclusive",
+      "ask_context_guarantee_workload": "{'inconclusive': 6, 'worse': 1, 'better': 1}",
+      "ask_context_rate": "0.012012012012012012"
+    },
+    {
+      "scheme": "mcar60",
+      "guarantee_ok": "72/72",
+      "rq1_full_vs_binary": "{'inconclusive': 4, 'better': 3, 'worse': 1}",
+      "ask_context_budget_cost": "+0.00004 [-0.00025,+0.00036]",
+      "ask_context_verdict": "inconclusive",
+      "ask_both_verdict": "inconclusive",
+      "ask_context_guarantee_workload": "{'worse': 5, 'inconclusive': 2, 'better': 1}",
+      "ask_context_rate": "0.021021021021021023"
+    },
+    {
+      "scheme": "struct40",
+      "guarantee_ok": "72/72",
+      "rq1_full_vs_binary": "{'inconclusive': 6, 'worse': 2}",
+      "ask_context_budget_cost": "-0.00027 [-0.00044,-0.00010]",
+      "ask_context_verdict": "better",
+      "ask_both_verdict": "inconclusive",
+      "ask_context_guarantee_workload": "{'worse': 5, 'inconclusive': 2, 'better': 1}",
+      "ask_context_rate": "0.019185852519185854"
+    }
+  ],
+  "per_1000": [
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": -3.33667000333667,
+      "lo": -7.5075075075075075,
+      "hi": 0.8341675008341675,
+      "p_holm": 0.7054589082183563,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 5.871030442219644
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 1.1678345011678344,
+      "lo": -4.838171504838172,
+      "hi": 6.67334000667334,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 8.105034604593024
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 208.70870870870868,
+      "lo": 197.1971971971972,
+      "hi": 220.0533867200534,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 16.330380959750265
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.01,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 218.38505171838503,
+      "lo": 205.03837170503834,
+      "hi": 231.5648982315649,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 19.20036880781919
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": -3.6703370036703373,
+      "lo": -7.841174507841175,
+      "hi": 0.5005005005005005,
+      "p_holm": 0.6606678664267146,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 5.9812575837712005
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 17.51751751751752,
+      "lo": 9.676343009676344,
+      "hi": 25.19185852519186,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 10.867774846830914
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 301.4681348014681,
+      "lo": 287.2872872872873,
+      "hi": 315.8158158158158,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 20.203518791547097
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.02,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 296.1294627961295,
+      "lo": 279.94661327994663,
+      "hi": 312.4833166499833,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 23.177468132867837
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": 2.8361695028361695,
+      "lo": -1.8351685018351687,
+      "hi": 7.5075075075075075,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 6.622522728179205
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 10.677344010677345,
+      "lo": 3.5035035035035036,
+      "hi": 18.01801801801802,
+      "p_holm": 0.025994801039792043,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 10.869341049636946
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 244.0774107440774,
+      "lo": 227.89456122789457,
+      "hi": 260.09342676009345,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 22.790729330033557
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.03,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 286.11945278611944,
+      "lo": 270.10343677010343,
+      "hi": 302.9738071404738,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 23.99606528578537
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": 0.6673340006673341,
+      "lo": -4.838171504838172,
+      "hi": 6.172839506172839,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 7.789289334916008
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 7.340674007340675,
+      "lo": -0.5005005005005005,
+      "hi": 15.181848515181848,
+      "p_holm": 0.20995800839832035,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 11.363702899873951
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 220.72072072072072,
+      "lo": 204.86736736736742,
+      "hi": 236.73673673673673,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 22.786284250209963
+    },
+    {
+      "harm": "fn",
+      "alpha": 0.04,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 273.9406072739406,
+      "lo": 257.2572572572572,
+      "hi": 290.2902902902903,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 23.181325368029924
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": 7.340674007340675,
+      "lo": 2.002002002002002,
+      "hi": 12.846179512846179,
+      "p_holm": 0.057588482303539294,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 7.81278561739325
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 24.524524524524523,
+      "lo": 15.849182515849183,
+      "hi": 33.03303303303303,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 12.512862265023982
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 378.5452118785452,
+      "lo": 363.69285952619293,
+      "hi": 393.7270603937271,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 21.500511730759015
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.05,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 362.19552886219554,
+      "lo": 345.3453453453453,
+      "hi": 379.5462128795462,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 23.68650498933749
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": 2.002002002002002,
+      "lo": -2.6693360026693362,
+      "hi": 6.67334000667334,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 6.801752813704914
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 17.51751751751752,
+      "lo": 9.342676009342675,
+      "hi": 25.525525525525527,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 11.643391346285608
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 295.7957957957958,
+      "lo": 279.94661327994663,
+      "hi": 311.4781448114781,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 22.202034219828114
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.1,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 282.44911578244916,
+      "lo": 266.76676676676675,
+      "hi": 297.2972972972973,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 21.463595241796355
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": 0.6673340006673341,
+      "lo": -1.5015015015015014,
+      "hi": 3.003003003003003,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 3.3033221712686074
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": 4.337671004337671,
+      "lo": 0.6673340006673341,
+      "hi": 8.174841508174842,
+      "p_holm": 0.09598080383923216,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 5.365113093971926
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 61.39472806139472,
+      "lo": 53.72038705372039,
+      "hi": 68.90223556890224,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 10.80984434010644
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.15,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": 59.89322655989323,
+      "lo": 52.719386052719386,
+      "hi": 67.06706706706707,
+      "p_holm": 0.003199360127974405,
+      "verdict_holm": "better",
+      "minimum_detectable_per_1000": 10.27247311069085
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "comparison": "Full gate vs binary baseline",
+      "escalations_avoided_per_1000": -0.33366700033366703,
+      "lo": -1.1678345011678344,
+      "hi": 0.5005005005005005,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 1.32130902752644
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "comparison": "Full gate vs entropy deferral",
+      "escalations_avoided_per_1000": -0.33366700033366703,
+      "lo": -1.5015015015015014,
+      "hi": 0.8341675008341675,
+      "p_holm": 1.0,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 1.7479587925131301
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "comparison": "Full gate vs conformal-ambiguity deferral",
+      "escalations_avoided_per_1000": 1.001001001001001,
+      "lo": -0.5005005005005005,
+      "hi": 2.5025025025025025,
+      "p_holm": 0.22835432913417317,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 2.190935408715502
+    },
+    {
+      "harm": "severe",
+      "alpha": 0.2,
+      "comparison": "Full gate vs learning-to-defer surrogate baseline",
+      "escalations_avoided_per_1000": -0.33366700033366703,
+      "lo": -1.5015015015015014,
+      "hi": 0.8341675008341675,
+      "p_holm": 0.6634673065386922,
+      "verdict_holm": "inconclusive",
+      "minimum_detectable_per_1000": 1.618288955128305
+    }
+  ],
+  "seed_stability": {
+    "seeds": 3,
+    "mean": {
+      "worst_overshoot": -0.00564,
+      "full_vs_binary": -6e-05,
+      "full_vs_entropy": -0.01329,
+      "full_vs_l2d": -0.27033,
+      "ask_context_cost_delta": -0.00015,
+      "ask_both_cost_delta": -0.00017
+    },
+    "sd": {
+      "worst_overshoot": 0.0001,
+      "full_vs_binary": 0.00284,
+      "full_vs_entropy": 0.00453,
+      "full_vs_l2d": 0.01404,
+      "ask_context_cost_delta": 9e-05,
+      "ask_both_cost_delta": 8e-05
+    },
+    "same_sign_full_vs_binary": false
+  },
+  "critical_findings": {
+    "base_miss_rate": {
+      "Edema": 0.04971638304971638,
+      "Consolidation": 0.024024024024024024,
+      "Pneumonia": 0.05488822155488822,
+      "Pneumothorax": 0.01701701701701702
+    },
+    "cal_events_per_fold": {
+      "Edema": 49.666666666666664,
+      "Consolidation": 24.0,
+      "Pneumonia": 54.833333333333336,
+      "Pneumothorax": 17.0
+    },
+    "union_all_targets_met": 4,
+    "union_configs": 4,
+    "shared_all_targets_met": 4,
+    "shared_configs": 4,
+    "table": [
+      {
+        "target_fraction": 0.75,
+        "gate": "U",
+        "method": "union_of_per_finding_gates",
+        "referral": 0.4100767434100767,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 24,
+        "risk_Edema": 0.007340674007340674,
+        "target_Edema": 0.037287287287287287,
+        "risk_Consolidation": 0.0031698365031698366,
+        "target_Consolidation": 0.018018018018018018,
+        "risk_Pneumonia": 0.020353687020353686,
+        "target_Pneumonia": 0.04116616616616617,
+        "risk_Pneumothorax": 0.0035035035035035035,
+        "target_Pneumothorax": 0.012762762762762763,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.75,
+        "gate": "U",
+        "method": "shared_score_single_threshold",
+        "referral": 0.32732732732732733,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 6,
+        "risk_Edema": 0.009175842509175842,
+        "target_Edema": 0.037287287287287287,
+        "risk_Consolidation": 0.005005005005005005,
+        "target_Consolidation": 0.018018018018018018,
+        "risk_Pneumonia": 0.02519185852519186,
+        "target_Pneumonia": 0.04116616616616617,
+        "risk_Pneumothorax": 0.0035035035035035035,
+        "target_Pneumothorax": 0.012762762762762763,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.75,
+        "gate": "UDMS",
+        "method": "union_of_per_finding_gates",
+        "referral": 0.41041041041041043,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 24,
+        "risk_Edema": 0.00850850850850851,
+        "target_Edema": 0.037287287287287287,
+        "risk_Consolidation": 0.003670337003670337,
+        "target_Consolidation": 0.018018018018018018,
+        "risk_Pneumonia": 0.019853186519853187,
+        "target_Pneumonia": 0.04116616616616617,
+        "risk_Pneumothorax": 0.0031698365031698366,
+        "target_Pneumothorax": 0.012762762762762763,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.75,
+        "gate": "UDMS",
+        "method": "shared_score_single_threshold",
+        "referral": 0.33483483483483484,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 6,
+        "risk_Edema": 0.00950950950950951,
+        "target_Edema": 0.037287287287287287,
+        "risk_Consolidation": 0.005005005005005005,
+        "target_Consolidation": 0.018018018018018018,
+        "risk_Pneumonia": 0.02435769102435769,
+        "target_Pneumonia": 0.04116616616616617,
+        "risk_Pneumothorax": 0.003670337003670337,
+        "target_Pneumothorax": 0.012762762762762763,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.5,
+        "gate": "U",
+        "method": "union_of_per_finding_gates",
+        "referral": 0.600266933600267,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 24,
+        "risk_Edema": 0.0031698365031698366,
+        "target_Edema": 0.02485819152485819,
+        "risk_Consolidation": 0.001668335001668335,
+        "target_Consolidation": 0.012012012012012012,
+        "risk_Pneumonia": 0.010844177510844178,
+        "target_Pneumonia": 0.02744411077744411,
+        "risk_Pneumothorax": 0.001668335001668335,
+        "target_Pneumothorax": 0.00850850850850851,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.5,
+        "gate": "U",
+        "method": "shared_score_single_threshold",
+        "referral": 0.5211878545211879,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 6,
+        "risk_Edema": 0.00333667000333667,
+        "target_Edema": 0.02485819152485819,
+        "risk_Consolidation": 0.001668335001668335,
+        "target_Consolidation": 0.012012012012012012,
+        "risk_Pneumonia": 0.013680347013680347,
+        "target_Pneumonia": 0.02744411077744411,
+        "risk_Pneumothorax": 0.0021688355021688356,
+        "target_Pneumothorax": 0.00850850850850851,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.5,
+        "gate": "UDMS",
+        "method": "union_of_per_finding_gates",
+        "referral": 0.5995995995995996,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 24,
+        "risk_Edema": 0.0018351685018351686,
+        "target_Edema": 0.02485819152485819,
+        "risk_Consolidation": 0.001668335001668335,
+        "target_Consolidation": 0.012012012012012012,
+        "risk_Pneumonia": 0.009843176509843177,
+        "target_Pneumonia": 0.02744411077744411,
+        "risk_Pneumothorax": 0.001668335001668335,
+        "target_Pneumothorax": 0.00850850850850851,
+        "all_targets_met": true
+      },
+      {
+        "target_fraction": 0.5,
+        "gate": "UDMS",
+        "method": "shared_score_single_threshold",
+        "referral": 0.5320320320320321,
+        "folds_with_no_valid_threshold": 0,
+        "folds": 6,
+        "risk_Edema": 0.0035035035035035035,
+        "target_Edema": 0.02485819152485819,
+        "risk_Consolidation": 0.0018351685018351686,
+        "target_Consolidation": 0.012012012012012012,
+        "risk_Pneumonia": 0.013179846513179846,
+        "target_Pneumonia": 0.02744411077744411,
+        "risk_Pneumothorax": 0.002335669002335669,
+        "target_Pneumothorax": 0.00850850850850851,
+        "all_targets_met": true
+      }
+    ],
+    "full_vs_U": [
+      {
+        "target_fraction": 0.75,
+        "method": "union_of_per_finding_gates",
+        "delta_referral_UDMS_vs_U": 0.000333667000333667,
+        "lo": -0.0065065065065065065,
+        "hi": 0.007340674007340674,
+        "p": 0.9254149170165967,
+        "mde80": 0.010041490860418696,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "target_fraction": 0.75,
+        "method": "shared_score_single_threshold",
+        "delta_referral_UDMS_vs_U": 0.0075075075075075074,
+        "lo": 0.0015015015015015015,
+        "hi": 0.01384718051384718,
+        "p": 0.01879624075184963,
+        "mde80": 0.008673099470079985,
+        "p_holm": 0.05638872225554889,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "target_fraction": 0.5,
+        "method": "union_of_per_finding_gates",
+        "delta_referral_UDMS_vs_U": -0.000667334000667334,
+        "lo": -0.007845345345345344,
+        "hi": 0.0065065065065065065,
+        "p": 0.8814237152569486,
+        "mde80": 0.010298985937389215,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "target_fraction": 0.5,
+        "method": "shared_score_single_threshold",
+        "delta_referral_UDMS_vs_U": 0.010844177510844178,
+        "lo": 0.004004004004004004,
+        "hi": 0.01768435101768435,
+        "p": 0.001999600079984003,
+        "mde80": 0.00997930828545902,
+        "p_holm": 0.007998400319936013,
+        "verdict_holm": "worse"
+      }
+    ],
+    "method_comparison": [
+      {
+        "target_fraction": 0.75,
+        "comparison": "union of per-finding gates minus shared single threshold (full gate)",
+        "delta_referral": 0.07557557557557558,
+        "lo": 0.06790123456790123,
+        "hi": 0.08358775442108769
+      },
+      {
+        "target_fraction": 0.5,
+        "comparison": "union of per-finding gates minus shared single threshold (full gate)",
+        "delta_referral": 0.06756756756756757,
+        "lo": 0.060393727060393726,
+        "hi": 0.07490824157490825
+      }
+    ]
+  },
+  "ensemble_signal": {
+    "contrasts": [
+      {
+        "harm": "fn",
+        "alpha": 0.01,
+        "contrast": "E adds to U",
+        "delta_referral": -0.0005005005005005005,
+        "lo": -0.004671338004671338,
+        "hi": 0.003670337003670337,
+        "p": 0.8402319536092782,
+        "mde80": 0.005816225936490924,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.01,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": -0.0011678345011678344,
+        "lo": -0.005672339005672339,
+        "hi": 0.00333667000333667,
+        "p": 0.6442711457708459,
+        "mde80": 0.006285024905251256,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.01,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": 0.0021688355021688356,
+        "lo": -0.0028361695028361693,
+        "hi": 0.00717384050717384,
+        "p": 0.41711657668466307,
+        "mde80": 0.006849648330304537,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.02,
+        "contrast": "E adds to U",
+        "delta_referral": 0.005338672005338672,
+        "lo": 0.0011678345011678344,
+        "hi": 0.009342676009342675,
+        "p": 0.014797040591881624,
+        "mde80": 0.005943002548146617,
+        "p_holm": 0.3107378524295141,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.02,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": 0.0018351685018351686,
+        "lo": -0.0025025025025025025,
+        "hi": 0.006006006006006006,
+        "p": 0.4355128974205159,
+        "mde80": 0.006144339935345306,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.02,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": 0.0055055055055055055,
+        "lo": 0.000667334000667334,
+        "hi": 0.010176843510176843,
+        "p": 0.02559488102379524,
+        "mde80": 0.00681525369234834,
+        "p_holm": 0.48630273945210956,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "contrast": "E adds to U",
+        "delta_referral": 0.0038371705038371703,
+        "lo": -0.0005005005005005005,
+        "hi": 0.008174841508174841,
+        "p": 0.08398320335932813,
+        "mde80": 0.006213779763890122,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": 0.0015015015015015015,
+        "lo": -0.002669336002669336,
+        "hi": 0.005672339005672339,
+        "p": 0.5078984203159368,
+        "mde80": 0.00585340612941976,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": -0.001334668001334668,
+        "lo": -0.006339673006339673,
+        "hi": 0.0038371705038371703,
+        "p": 0.6370725854829035,
+        "mde80": 0.007297312315196623,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.04,
+        "contrast": "E adds to U",
+        "delta_referral": 0.005171838505171838,
+        "lo": 0.0008341675008341675,
+        "hi": 0.009676343009676344,
+        "p": 0.023595280943811237,
+        "mde80": 0.006317027116432522,
+        "p_holm": 0.47190561887622473,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.04,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": 0.0011678345011678344,
+        "lo": -0.0028361695028361693,
+        "hi": 0.005005005005005005,
+        "p": 0.6034793041391722,
+        "mde80": 0.005740559736569518,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.04,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": 0.0005005005005005005,
+        "lo": -0.005171838505171838,
+        "hi": 0.006172839506172839,
+        "p": 0.8814237152569486,
+        "mde80": 0.007969349936513088,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.05,
+        "contrast": "E adds to U",
+        "delta_referral": -0.001001001001001001,
+        "lo": -0.00667334000667334,
+        "hi": 0.0046755088421754475,
+        "p": 0.7446510697860428,
+        "mde80": 0.00798296972934963,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.05,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": 0.005672339005672339,
+        "lo": 0.0001668335001668335,
+        "hi": 0.011177844511177844,
+        "p": 0.046390721855628876,
+        "mde80": 0.007925529840225612,
+        "p_holm": 0.7886422715456909,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.05,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": -0.001668335001668335,
+        "lo": -0.007841174507841175,
+        "hi": 0.0045045045045045045,
+        "p": 0.5942811437712457,
+        "mde80": 0.008789596128615148,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.1,
+        "contrast": "E adds to U",
+        "delta_referral": -0.0025025025025025025,
+        "lo": -0.007007007007007007,
+        "hi": 0.002002002002002002,
+        "p": 0.3103379324135173,
+        "mde80": 0.006655571982773128,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.1,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": -0.004838171504838172,
+        "lo": -0.009342676009342675,
+        "hi": -0.000333667000333667,
+        "p": 0.039192161567686463,
+        "mde80": 0.00642017938699555,
+        "p_holm": 0.7054589082183563,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.1,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": -0.006840173506840174,
+        "lo": -0.011845178511845179,
+        "hi": -0.001668335001668335,
+        "p": 0.009998000399920015,
+        "mde80": 0.007308224138916528,
+        "p_holm": 0.21995600879824034,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.15,
+        "contrast": "E adds to U",
+        "delta_referral": -0.00333667000333667,
+        "lo": -0.005338672005338672,
+        "hi": -0.001334668001334668,
+        "p": 0.001999600079984003,
+        "mde80": 0.0028773165573930054,
+        "p_holm": 0.04799040191961608,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.15,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": -0.0011678345011678344,
+        "lo": -0.003003003003003003,
+        "hi": 0.000667334000667334,
+        "p": 0.24755048990201958,
+        "mde80": 0.0026007649273052822,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.15,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": -0.0018351685018351686,
+        "lo": -0.004170837504170837,
+        "hi": 0.0005005005005005005,
+        "p": 0.15276944611077783,
+        "mde80": 0.0034640101265860936,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.2,
+        "contrast": "E adds to U",
+        "delta_referral": -0.000667334000667334,
+        "lo": -0.0015015015015015015,
+        "hi": 0.0,
+        "p": 0.1247750449910018,
+        "mde80": 0.0011440803339160237,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.2,
+        "contrast": "E adds to U+D+M+S",
+        "delta_referral": -0.001001001001001001,
+        "lo": -0.0018351685018351686,
+        "hi": -0.000333667000333667,
+        "p": 0.008398320335932814,
+        "mde80": 0.0011437620298356578,
+        "p_holm": 0.1931613677264547,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.2,
+        "contrast": "All signals incl. E vs U",
+        "delta_referral": -0.000667334000667334,
+        "lo": -0.0015015015015015015,
+        "hi": 0.0,
+        "p": 0.1287742451509698,
+        "mde80": 0.0011440803339160237,
+        "p_holm": 1.0,
+        "verdict_holm": "inconclusive"
+      }
+    ],
+    "auroc_critical_miss": {
+      "U": 0.7882764231992916,
+      "UE": 0.7849223820041058,
+      "delta": -0.0033540411951857863,
+      "lo": -0.007509426991215632,
+      "hi": 0.000607074701299457
+    }
+  },
+  "rq3_simulation": {
+    "assumptions": {
+      "servers": 2,
+      "service_rate": 1.0,
+      "base_override": 0.02,
+      "loads": {
+        "low": 0.6,
+        "medium": 0.9,
+        "overloaded": 1.2
+      },
+      "base_share": 0.3,
+      "reps": 10,
+      "kappas": [
+        0.5,
+        1.0
+      ],
+      "override_slopes": [
+        0.02,
+        0.04,
+        0.08
+      ]
+    },
+    "settings": 18,
+    "aware_lower_harm_same_volume": 9,
+    "aware_lower_override": 18,
+    "note": "Simulation under assumed alert-fatigue model; not evidence about real clinicians."
+  },
+  "label_agreement": {
+    "patients_matched": 5994,
+    "patients": 5994,
+    "macro_kappa": 0.9828775648957861
+  },
+  "label_robustness": {
+    "recalibrated_met": 16,
+    "shifted_met": 16,
+    "configs": 16,
+    "shifted_overshoot_max": -0.006388610833055277
+  },
+  "fresh_n": 2000,
+  "fresh_answer_all": {
+    "fn": 0.047323333333333335,
+    "severe": 0.1195
+  },
+  "fresh_ask_context": {
+    "delta_cost": -1.0133623321123414e-06,
+    "lo": -0.00020336798401251533,
+    "hi": 0.00020895851362179475,
+    "verdict": "inconclusive",
+    "ask_rate": 0.01475
+  },
+  "fresh_confirmation": {
+    "patients": 2000,
+    "configs": 8,
+    "target_met": 8,
+    "referral_full_vs_U": [
+      {
+        "harm": "fn",
+        "alpha": 0.01,
+        "delta_referral_full_vs_U": 0.00475,
+        "lo": 0.0017500000000000003,
+        "hi": 0.00775,
+        "verdict": "worse",
+        "p": 0.0023995200959808036,
+        "p_holm": 0.01919616076784643
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.02,
+        "delta_referral_full_vs_U": 0.0008333333333333333,
+        "lo": -0.0022500000000000003,
+        "hi": 0.003916666666666666,
+        "verdict": "inconclusive",
+        "p": 0.5974805038992201,
+        "p_holm": 1.0
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "delta_referral_full_vs_U": -0.001416666666666667,
+        "lo": -0.005833333333333333,
+        "hi": 0.002833333333333333,
+        "verdict": "inconclusive",
+        "p": 0.50749850029994,
+        "p_holm": 1.0
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.04,
+        "delta_referral_full_vs_U": -0.003833333333333334,
+        "lo": -0.00875,
+        "hi": 0.0008333333333333331,
+        "verdict": "inconclusive",
+        "p": 0.10677864427114576,
+        "p_holm": 0.7474505098980203
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.05,
+        "delta_referral_full_vs_U": 0.0011666666666666665,
+        "lo": -0.00275,
+        "hi": 0.005,
+        "verdict": "inconclusive",
+        "p": 0.5646870625874825,
+        "p_holm": 1.0
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.1,
+        "delta_referral_full_vs_U": -0.0027500000000000003,
+        "lo": -0.006,
+        "hi": 0.0006666666666666663,
+        "verdict": "inconclusive",
+        "p": 0.11277744451109778,
+        "p_holm": 0.7474505098980203
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.15,
+        "delta_referral_full_vs_U": 0.0005833333333333333,
+        "lo": -0.001,
+        "hi": 0.0021666666666666666,
+        "verdict": "inconclusive",
+        "p": 0.47430513897220555,
+        "p_holm": 1.0
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.2,
+        "delta_referral_full_vs_U": -0.00016666666666666666,
+        "lo": -0.0006666666666666666,
+        "hi": 0.0003333333333333333,
+        "verdict": "inconclusive",
+        "p": 0.6226754649070186,
+        "p_holm": 1.0
+      }
+    ]
+  },
+  "external_nih_subgroups": {
+    "groups": [
+      "sex=F",
+      "sex=M",
+      "age<40",
+      "age 40-59",
+      "age>=60"
+    ],
+    "rows": 60,
+    "point_target_met": 60,
+    "upper_bound_met": 45,
+    "gaps_with_interval_excluding_zero": 2,
+    "gaps": 12
+  },
+  "external_nih": {
+    "patients": 6000,
+    "shared_labels": [
+      "No Finding",
+      "Cardiomegaly",
+      "Edema",
+      "Consolidation",
+      "Pneumonia",
+      "Atelectasis",
+      "Pneumothorax",
+      "Pleural Effusion"
+    ],
+    "macro_auroc": 0.7509209076347487,
+    "configs": 6,
+    "target_met_mimic_calibrated": 6,
+    "target_met_nih_recalibrated": 6,
+    "contrasts": [
+      {
+        "harm": "fn",
+        "alpha": 0.0024,
+        "comparison": "Full gate vs U",
+        "delta_referral": 0.014397575145238697,
+        "lo": 0.01128231034773091,
+        "hi": 0.017428643596867896,
+        "p": 0.0003999200159968006,
+        "mde80": 0.004458752991064732,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0024,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": 0.009093205354887599,
+        "lo": 0.004336111812747326,
+        "hi": 0.01376610255114928,
+        "p": 0.0003999200159968006,
+        "mde80": 0.00674986155742097,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0024,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.17230782184053214,
+        "lo": -0.18207670287109542,
+        "hi": -0.162709438410373,
+        "p": 0.0003999200159968006,
+        "mde80": 0.01391472160195433,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0048,
+        "comparison": "Full gate vs U",
+        "delta_referral": -0.007746063820830176,
+        "lo": -0.010357202997389915,
+        "hi": -0.005220173444472511,
+        "p": 0.0003999200159968006,
+        "mde80": 0.0036440115221481177,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0048,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": 0.014102887934663634,
+        "lo": 0.009387892565462656,
+        "hi": 0.018691588785046728,
+        "p": 0.0003999200159968006,
+        "mde80": 0.006711079962676886,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0048,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.27991075187336867,
+        "lo": -0.2919097836153911,
+        "hi": -0.2683337543150628,
+        "p": 0.0003999200159968006,
+        "mde80": 0.017532805815260136,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0073,
+        "comparison": "Full gate vs U",
+        "delta_referral": 0.001052454323482361,
+        "lo": -0.0007998652858465943,
+        "hi": 0.0029047739328113154,
+        "p": 0.276744651069786,
+        "mde80": 0.00270078790840975,
+        "p_holm": 0.3375324935012997,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0073,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": 0.0038309337374757926,
+        "lo": -0.0015576323987538953,
+        "hi": 0.009135303527826892,
+        "p": 0.16876624675064986,
+        "mde80": 0.007615449740325198,
+        "p_holm": 0.3375324935012997,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.0073,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.18763155679043528,
+        "lo": -0.2019880862170582,
+        "hi": -0.1734444725098931,
+        "p": 0.0003999200159968006,
+        "mde80": 0.020274078900082603,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.012,
+        "comparison": "Full gate vs U",
+        "delta_referral": 0.009429990738401953,
+        "lo": 0.0063568241138334605,
+        "hi": 0.012545255535909742,
+        "p": 0.0003999200159968006,
+        "mde80": 0.004403662155356626,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.012,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": 0.03788835564536499,
+        "lo": 0.03094215711038141,
+        "hi": 0.044877704807611336,
+        "p": 0.0003999200159968006,
+        "mde80": 0.010038923678469926,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.012,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.29834975162077965,
+        "lo": -0.31089605961101285,
+        "hi": -0.28597288877662713,
+        "p": 0.0003999200159968006,
+        "mde80": 0.017900843790058893,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.018,
+        "comparison": "Full gate vs U",
+        "delta_referral": 0.003409952008082849,
+        "lo": 0.0009682579776037717,
+        "hi": 0.005935842384440515,
+        "p": 0.007198560287942412,
+        "mde80": 0.0034759350819562325,
+        "p_holm": 0.028794241151769647,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.018,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": 0.044834554180348575,
+        "lo": 0.03864612275827229,
+        "hi": 0.050980887429485554,
+        "p": 0.0003999200159968006,
+        "mde80": 0.008800380585060743,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "worse"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.018,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.26012461059190034,
+        "lo": -0.27460743453734104,
+        "hi": -0.24526395554432937,
+        "p": 0.0003999200159968006,
+        "mde80": 0.020809178200434885,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.024,
+        "comparison": "Full gate vs U",
+        "delta_referral": -0.006020038730319105,
+        "lo": -0.00795760713985013,
+        "hi": -0.00408352277511156,
+        "p": 0.0003999200159968006,
+        "mde80": 0.0028141718975353146,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.024,
+        "comparison": "Full gate vs entropy",
+        "delta_referral": -0.007746063820830177,
+        "lo": -0.013851351351351352,
+        "hi": -0.0015986781173697217,
+        "p": 0.013597280543891222,
+        "mde80": 0.008823203639562637,
+        "p_holm": 0.04079184163167367,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "severe",
+        "alpha": 0.024,
+        "comparison": "Full gate vs ambiguity",
+        "delta_referral": -0.21049086469647216,
+        "lo": -0.22531257893407425,
+        "hi": -0.195167129746569,
+        "p": 0.0003999200159968006,
+        "mde80": 0.021598382788487566,
+        "p_holm": 0.007198560287942411,
+        "verdict_holm": "better"
+      }
+    ]
+  },
+  "scorecard": [
+    {
+      "claim": "Finite-sample guarantee holds out of sample (cross-fit, primary scenario)",
+      "evidence": "72/72 gate configurations kept realised risk <= alpha",
+      "supported": true
+    },
+    {
+      "claim": "Guarantee confirmed on untouched fresh patients",
+      "evidence": "8/8 full-gate targets met (2,000 patients)",
+      "supported": true
+    },
+    {
+      "claim": "RQ1: full 5-signal gate needs less workload than the binary baseline at equal guaranteed risk",
+      "evidence": "Holm-adjusted verdicts across 8 targets: {'inconclusive': 8}",
+      "supported": false
+    },
+    {
+      "claim": "RQ1 component: D adds to U",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 8}",
+      "supported": false
+    },
+    {
+      "claim": "RQ1 component: M adds to U+D",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 7, 'better': 1}",
+      "supported": false
+    },
+    {
+      "claim": "RQ1 component: S adds to U+D+M",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 7, 'worse': 1}",
+      "supported": false
+    },
+    {
+      "claim": "RQ2: ASK-CONTEXT lowers cost at the primary budget",
+      "evidence": "delta cost -0.00009 [-0.00025, +0.00008]",
+      "supported": false
+    },
+    {
+      "claim": "RQ2: ASK-LATERAL lowers cost at the primary budget",
+      "evidence": "delta cost -0.00000 [-0.00001, -0.00000]",
+      "supported": true
+    },
+    {
+      "claim": "RQ2: both Ask actions lowers cost at the primary budget",
+      "evidence": "delta cost -0.00009 [-0.00025, +0.00007]",
+      "supported": false
+    },
+    {
+      "claim": "RQ2: ASK-CONTEXT lowers workload at equal guaranteed risk",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 6, 'worse': 1, 'better': 1}",
+      "supported": false
+    },
+    {
+      "claim": "Cost-aware Ask beats cost-unaware \"ask whenever context is missing\" at the same workload",
+      "evidence": "binary_UDMS: -0.00383 [-0.00481,-0.00288]; ask_both_UDMS: -0.00393 [-0.00486,-0.00300]",
+      "supported": true
+    },
+    {
+      "claim": "ASK-CONTEXT pays off somewhere in the assumed cost grid",
+      "evidence": "15/30 cells",
+      "supported": true
+    },
+    {
+      "claim": "ASK-LATERAL pays off somewhere in the assumed cost grid",
+      "evidence": "2/6 cells",
+      "supported": true
+    },
+    {
+      "claim": "ASK-CONTEXT result holds in every deployment scheme (incl. the held-out structured-masking scheme)",
+      "evidence": "natural: inconclusive; mcar30: inconclusive; mcar60: inconclusive; struct40: better",
+      "supported": false
+    },
+    {
+      "claim": "ASK-CONTEXT confirmed on untouched fresh patients",
+      "evidence": "delta cost -0.00000 [-0.00020, +0.00021]; ask rate 1.5%",
+      "supported": false
+    },
+    {
+      "claim": "PRIMARY ENDPOINT (pooled cross-fit): Full gate vs binary baseline at fn target 0.03",
+      "evidence": "referral -0.0028 [-0.0075, +0.0018], Holm p=1.000; = 2.8 fewer escalations per 1,000 patients",
+      "supported": false
+    },
+    {
+      "claim": "PRIMARY ENDPOINT on untouched fresh patients",
+      "evidence": "referral -0.0014 [-0.0058, +0.0028], Holm p=1.000",
+      "supported": false
+    },
+    {
+      "claim": "Full gate vs a learning-to-defer surrogate-loss baseline (Madras/Mozannar-Sontag style)",
+      "evidence": "Holm-adjusted verdicts: {'better': 7, 'inconclusive': 1}",
+      "supported": true
+    },
+    {
+      "claim": "Stable across 3 independent fold assignments",
+      "evidence": "full-vs-binary referral change at the primary target: mean -0.0001, sd 0.0028; same sign in all seeds: False",
+      "supported": false
+    },
+    {
+      "claim": "Guarantee survives a change of labeler (NegBio)",
+      "evidence": "16/16 met after recalibration; 16/16 met if the gate keeps its CheXpert calibration",
+      "supported": true
+    },
+    {
+      "claim": "Asking for the missing context FIRST, then gating, lowers workload at equal guaranteed risk",
+      "evidence": "verdicts: {'worse': 8}; break-even cost of one context request = 0.000 of a full review (median over targets)",
+      "supported": false
+    },
+    {
+      "claim": "EXTERNAL dataset (NIH ChestX-ray14, 6,000 patients, 8 shared labels): guarantee holds",
+      "evidence": "6/6 full-gate targets met with MIMIC calibration unchanged; 6/6 after recalibrating only the threshold; image-only macro AUROC 0.751",
+      "supported": true
+    },
+    {
+      "claim": "EXTERNAL dataset: full gate needs fewer escalations than the uncertainty-only gate",
+      "evidence": "Holm-adjusted verdicts: {'worse': 3, 'better': 2, 'inconclusive': 1}",
+      "supported": false
+    },
+    {
+      "claim": "Per-critical-finding risk guarantees (Edema, Consolidation, Pneumonia, Pneumothorax) hold simultaneously",
+      "evidence": "4/4 union-gate and 4/4 shared-threshold configurations met all four targets; realised risk was on average 28% of the target (conservative); escalation 33%-60%",
+      "supported": true
+    },
+    {
+      "claim": "A single shared threshold meets all per-finding targets with fewer escalations than a union of per-finding gates",
+      "evidence": "target 0.75: union minus shared +0.076 [+0.068, +0.084]; target 0.5: union minus shared +0.068 [+0.060, +0.075]",
+      "supported": true
+    },
+    {
+      "claim": "Per-finding guarantees: full signal set needs fewer escalations than uncertainty alone",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 3, 'worse': 1}",
+      "supported": false
+    },
+    {
+      "claim": "Ensemble-disagreement signal E: All signals incl. E vs U",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 8}",
+      "supported": false
+    },
+    {
+      "claim": "Ensemble-disagreement signal E: E adds to U",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 7, 'better': 1}",
+      "supported": false
+    },
+    {
+      "claim": "Ensemble-disagreement signal E: E adds to U+D+M+S",
+      "evidence": "Holm-adjusted verdicts: {'inconclusive': 8}",
+      "supported": false
+    },
+    {
+      "claim": "Second labeler (NegBio) agrees closely with CheXpert on the evaluation patients",
+      "evidence": "macro Cohen kappa 0.983 on 5,994 patients (both rule-based labelers: NOT an independent reference standard)",
+      "supported": true
+    },
+    {
+      "claim": "EXTERNAL subgroup audit (NIH sex and age): risk targets hold in every subgroup",
+      "evidence": "point estimate within target in 60/60 subgroup configurations; upper 95% bound within target in 45/60; 2/12 subgroup risk gaps had an interval excluding zero",
+      "supported": true
+    },
+    {
+      "claim": "RQ3 (simulation only): workload-aware thresholds reduce harm at equal volume",
+      "evidence": "9/18 simulated settings",
+      "supported": false
+    },
+    {
+      "claim": "Signal 2 stress test: mismatched clinical context is detectable",
+      "evidence": "detection AUROC 0.628 (0.5 = chance)",
+      "supported": true
+    },
+    {
+      "claim": "Signal 3 under withheld context: gate predicts when asking helps (held-out structured scheme)",
+      "evidence": "corr(predicted gain, true gain) = 0.188",
+      "supported": false
+    },
+    {
+      "claim": "Signal 1: conformal sets reach nominal coverage",
+      "evidence": "0 labels with upper CI below nominal",
+      "supported": true
+    }
+  ]
+}
