@@ -8,3 +8,10 @@ torch
 pillow
 huggingface_hub
 threadpoolctl
+# notebook 03 (CheXpert Plus) and figure export
+open_clip_torch
+transformers
+redivis
+pydicom
+openpyxl
+pymupdf

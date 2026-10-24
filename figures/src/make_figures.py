@@ -1,268 +1,278 @@
-"""Publication figures for the manuscript. Reads only the share-safe result tables; writes vector PDF + 450-dpi PNG.
+"""Data figures (Figs. 4-8, S1-S4) of the manuscript, drawn only from the share-safe result tables; writes vector PDF + 450-dpi PNG.
 Run:  python make_figures.py        (needs numpy, pandas, matplotlib)
-Colours: validated categorical palette (blue, orange, aqua, magenta, violet) with direct labels; sequential/diverging ramps for heatmaps."""
-import re, json, ast
+Figures 1-3 are draw.io schematics (drawio/make_drawio.py, drawio/export_drawio.py) and share this palette.
+Figures carry panel letters, axes and legends only; titles and explanations are in the manuscript captions.
+
+Chart type follows the question:
+  Fig. 4  dumbbells (level and gain per label), interval plots      Fig. 5  realised risk against target, identity line (log-log)
+  Fig. 6  risk-coverage curves + slopegraph between cohorts          Fig. 7  forest plots + break-even heatmap
+  Fig. 8  subgroup forest plots      S1 decision curves      S2 transfer scatter with identity line      S3 forest plots
+Colour has one meaning throughout: image blue, history ochre, lateral teal; full signal set navy, uncertainty only blue,
+entropy teal, conformal ambiguity ochre, surrogate learning-to-defer brick, oracle grey; MIMIC threshold kept = open ochre,
+recalibrated locally = filled teal; better teal, worse brick, inconclusive grey."""
+import re, json
 from pathlib import Path
 import numpy as np, pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
+from matplotlib.lines import Line2D
+from matplotlib.ticker import FuncFormatter
 
 ROOT = Path(__file__).resolve().parents[2]
-R = ROOT/'results'/'main'; RB = ROOT/'results'/'mimic_subgroups'
+R = ROOT/'results'/'main'; RB = ROOT/'results'/'mimic_subgroups'; RX = ROOT/'results'/'external_chexpert_plus'
 OUT = ROOT/'figures'/'final'; OUT.mkdir(exist_ok=True)
 res = json.load(open(R/'results_v19.json'))
+cxp = json.load(open(RX/'results_v20_chexpert_plus.json'))['external_chexpert_plus']
 
-C = dict(blue='#2a78d6', orange='#eb6834', aqua='#1baf7a', yellow='#eda100', magenta='#e87ba4', violet='#6250d6', red='#e34948', green='#008300')
-INK, INK2, MUTED, GRID, AXIS, SURF = '#0b0b0b', '#52514e', '#898781', '#e1e0d9', '#c3c2b7', '#ffffff'
+NAVY, BLUE, TEAL, OCHRE, BRICK, GREY = '#17344D', '#3A7FB5', '#00918A', '#C08232', '#B5534A', '#8A97A3'
+INK, INK2, MUTED, GRID, AXIS, SURF = '#17344D', '#4A5B6A', '#7D8B97', '#E6EAEE', '#B9C3CC', '#FFFFFF'
+GATE = {'UDMS': (NAVY, 'full signal set', 'D'), 'U': (BLUE, 'uncertainty only', 'o'), 'entropy': (TEAL, 'entropy', 's'),
+        'ambiguity': (OCHRE, 'conformal ambiguity', '^'), 'L2D_U': (BRICK, 'surrogate learning-to-defer', 'v'), 'oracle': (GREY, 'oracle', None)}
+VERDICT = {'better': TEAL, 'worse': BRICK}
 plt.rcParams.update({
-    'font.family': 'Arial', 'font.size': 7.5, 'axes.titlesize': 8, 'axes.labelsize': 7.5, 'xtick.labelsize': 7, 'ytick.labelsize': 7,
+    'font.family': 'Arial', 'font.size': 7.5, 'axes.labelsize': 7.5, 'xtick.labelsize': 7, 'ytick.labelsize': 7,
     'axes.edgecolor': AXIS, 'axes.linewidth': 0.7, 'axes.labelcolor': INK2, 'xtick.color': INK2, 'ytick.color': INK2, 'text.color': INK,
-    'axes.spines.top': False, 'axes.spines.right': False, 'axes.facecolor': SURF, 'figure.facecolor': SURF, 'savefig.facecolor': SURF,
-    'axes.grid': True, 'grid.color': GRID, 'grid.linewidth': 0.5, 'axes.axisbelow': True, 'legend.frameon': False, 'legend.fontsize': 7,
-    'pdf.fonttype': 42, 'ps.fonttype': 42, 'lines.solid_capstyle': 'round'})
+    'xtick.major.size': 2.5, 'ytick.major.size': 2.5, 'axes.spines.top': False, 'axes.spines.right': False, 'axes.facecolor': SURF,
+    'figure.facecolor': SURF, 'savefig.facecolor': SURF, 'axes.grid': True, 'grid.color': GRID, 'grid.linewidth': 0.6,
+    'axes.axisbelow': True, 'legend.frameon': False, 'legend.fontsize': 6.8, 'pdf.fonttype': 42, 'ps.fonttype': 42, 'lines.solid_capstyle': 'round'})
+
+
 def rd(name, base=R):
     return pd.read_csv(base/f'{name}.csv')
-def panel(ax, letter, x=-0.12, y=1.04):
-    ax.text(x, y, letter, transform=ax.transAxes, fontsize=10, fontweight='bold', va='bottom', ha='left', color=INK)
+def letter(ax, s, x=-0.02, y=1.02):
+    ax.text(x, y, s, transform=ax.transAxes, fontsize=10, fontweight='bold', va='bottom', ha='right', color=INK)
 def save(fig, name):
     fig.savefig(OUT/f'{name}.pdf', bbox_inches='tight'); fig.savefig(OUT/f'{name}.png', dpi=450, bbox_inches='tight'); plt.close(fig); print('saved', name)
-def dotci(ax, y, m, lo, hi, color, size=22, marker='o', lw=1.4, zorder=3):
-    ax.hlines(y, lo, hi, color=color, lw=lw, zorder=zorder); ax.scatter([m], [y], s=size, color=color, marker=marker, zorder=zorder+1, edgecolor=SURF, linewidth=0.6)
-def num(s): return float(s)
+def dot(ax, y, m, lo=None, hi=None, color=NAVY, marker='o', size=26, filled=True, lw=1.4, z=3):
+    if lo is not None:
+        ax.hlines(y, lo, hi, color=color, lw=lw, zorder=z)
+    ax.scatter([m], [y], s=size, marker=marker, zorder=z+1, color=color if filled else SURF, edgecolor=color if not filled else SURF, linewidth=1.1 if not filled else 0.6)
+def zero(ax, at=0):
+    ax.axvline(at, color=INK2, lw=0.8, zorder=1)
+def ygrid_off(ax):
+    ax.grid(axis='y', alpha=0)
+def legend_handles(items):
+    return [Line2D([], [], color=c, marker=m, mfc=(c if f else SURF), ls=ls, lw=lw, ms=4.6, label=l) for c, m, f, l, ls, lw in items]
+pct = FuncFormatter(lambda v, _: f'{v:g}')
 
-# ============================================================== Figure 1: study design
-def fig1():
-    fig, ax = plt.subplots(figsize=(7.4, 5.3)); ax.set_xlim(0, 100); ax.set_ylim(0, 72); ax.axis('off'); ax.grid(False)
-    def box(x, y, w, h, text, fc='#f3f6fb', ec=AXIS, fs=6.8, bold=False, color=INK):
-        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle='round,pad=0.25,rounding_size=1.2', fc=fc, ec=ec, lw=0.9))
-        ax.text(x+w/2, y+h/2, text, ha='center', va='center', fontsize=fs, fontweight='bold' if bold else 'normal', color=color, linespacing=1.3)
-    def arrow(x1, y1, x2, y2, color=INK2, rad=0.0):
-        ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle='-|>', mutation_scale=9, lw=1.0, color=color, connectionstyle=f'arc3,rad={rad}'))
-    ax.text(1, 70.5, 'Data (frozen embeddings; no encoder training)', fontsize=8, fontweight='bold', color=INK2)
-    box(1, 56, 30, 12, 'MIMIC-CXR-JPG\n5,994 patients, 14 labels\nimage + clinical history\n+ lateral view', fc='#e8f0fb', ec=C['blue'])
-    box(35, 56, 30, 12, 'Untouched MIMIC patients\n2,000 patients\n(no design choice used them)', fc='#e8f0fb', ec=C['blue'])
-    box(69, 56, 30, 12, 'NIH ChestX-ray14 (external)\n6,000 patients, image only\n8 labels shared with CheXpert', fc='#fdeee8', ec=C['orange'])
-    ax.text(1, 51.5, 'Cross-fitting: 6 patient groups, roles rotate, every patient evaluated once', fontsize=8, fontweight='bold', color=INK2)
-    roles = [('Fit', C['blue']), ('Fit', C['blue']), ('Fit', C['blue']), ('Tune', C['aqua']), ('Calibrate', C['yellow']), ('Evaluate', C['violet'])]
-    for i, (t, col) in enumerate(roles):
-        ax.add_patch(Rectangle((1+i*8.6, 42.5), 8.0, 6, fc=col, ec=SURF, lw=1.2)); ax.text(1+i*8.6+4, 45.5, t, ha='center', va='center', color='white' if t != 'Calibrate' else INK, fontsize=6.8, fontweight='bold')
-    ax.text(54, 45.5, 'repeated for 3 independent\ngroup assignments', fontsize=6.8, color=INK2, va='center', linespacing=1.3)
-    ax.text(1, 40.3, 'classifier heads  |  temperature, conformal quantiles, gate models  |  escalation threshold  |  out-of-sample results', fontsize=6.0, color=INK2)
-    ax.text(1, 35.8, 'Oversight layer', fontsize=8, fontweight='bold', color=INK2)
-    box(1, 19.5, 21, 13.5, 'Signals\nuncertainty U\ndisagreement D\nmissing context M\nseverity S, ensemble E', fc='#f6f4fd', ec=C['violet'], fs=6.4)
-    box(27, 22, 19, 9.5, 'Gate score:\npredicted loss\nof answering', fs=6.6)
-    box(51, 21, 22, 11.5, 'Threshold t calibrated\n(Learn-then-Test):\nrisk among answered\ncases \u2264 target', fc='#fff6e0', ec=C['yellow'], fs=6.4)
-    acts = [('Answer', C['green'], 30.5, True), ('Escalate', C['red'], 23.5, True), ('Ask history / lateral view\n(simulated request)', C['orange'], 15.0, False)]
-    for t, col, yy, bd in acts:
-        box(78, yy, 21, 5.5 if bd else 6.5, t, fc='white', ec=col, fs=6.4, bold=bd)
-    arrow(22.4, 26.3, 26.6, 26.7); arrow(46.4, 26.7, 50.6, 26.7)
-    arrow(73.4, 28.5, 77.6, 33.0, rad=-0.15); arrow(73.4, 26.7, 77.6, 26.3); arrow(73.4, 25.0, 77.6, 18.8, rad=0.15)
-    ax.text(1, 13.0, 'Evaluation', fontsize=8, fontweight='bold', color=INK2)
-    items = ['Observed risk vs target:\ncross-fit, untouched,\nNIH, second labeler', 'Escalations needed vs\nentropy, conformal-ambiguity\nand surrogate-loss deferral', 'Extra signals and Ask\nactions: paired intervals,\nHolm, 3 fold assignments', 'Per-finding bounds,\nsex / age / race\nsubgroups']
-    for i, t in enumerate(items):
-        box(1+i*24.7, 0.6, 23.2, 9.6, t, fc='#f4f4f1', fs=6.2)
-    save(fig, 'Fig1_study_design')
 
-# ============================================================== Figure 2: information value and calibration
-def fig2():
-    cl = rd('classifier_per_label').sort_values('gain_context'); cov = rd('conformal_coverage'); cov = cov[cov.group == 'all'].set_index('label').loc[cl.label]
-    fig = plt.figure(figsize=(7.4, 3.9)); gs = fig.add_gridspec(2, 2, width_ratios=[1.35, 1], height_ratios=[1.35, 1], wspace=0.55, hspace=0.62)
-    ax = fig.add_subplot(gs[:, 0]); y = np.arange(len(cl))
-    ax.axvline(0, color=INK2, lw=0.8)
-    ax.hlines(y, 0, cl.gain_context, color=C['blue'], lw=1.0, alpha=0.35); ax.scatter(cl.gain_context, y+0.12, s=26, color=C['blue'], label='+ clinical history', zorder=3, edgecolor=SURF, lw=0.6)
-    ax.scatter(cl.gain_lateral, y-0.12, s=26, color=C['orange'], marker='D', label='+ lateral view', zorder=3, edgecolor=SURF, lw=0.6)
-    ax.set_yticks(y, cl.label); ax.set_xlabel('AUROC gain over image only'); ax.set_ylim(-0.7, len(cl)-0.3); ax.grid(axis='y', alpha=0)
-    ax.legend(loc='lower right', handletextpad=0.2); panel(ax, 'A', -0.42)
-    ax.set_title('What each information request adds (per label)', loc='left', fontsize=8, fontweight='bold', pad=6)
-    mac = res['classifier']
-    ax.text(0.98, 0.74, f"macro-AUROC {mac['macro_auroc_image_only']:.3f} \u2192 {mac['macro_auroc_with_context']:.3f} with history\nmacro gain from lateral view: +{mac['macro_gain_lateral']:.3f}", transform=ax.transAxes, fontsize=6.6, va='top', ha='right', color=INK2)
-    # B: routing value in cost units
-    ax2 = fig.add_subplot(gs[0, 1]); v = res['value_of_information']
-    for i, (k, lab, col, mk) in enumerate([('context', 'history', C['blue'], 'o'), ('lateral', 'lateral view', C['orange'], 'D')]):
-        dotci(ax2, 1-i, v[k]['mean']*1e3, v[k]['lo']*1e3, v[k]['hi']*1e3, col, marker=mk)
-    ax2.axvline(0, color=INK2, lw=0.8); ax2.set_yticks([1, 0], ['clinical history', 'lateral view']); ax2.set_ylim(-0.6, 1.6); ax2.grid(axis='y', alpha=0)
-    ax2.set_xlabel('Realised cost reduction per patient (x10$^{-3}$)'); panel(ax2, 'B', -0.4); ax2.set_title('Value for routing', loc='left', fontsize=8, fontweight='bold', pad=6)
-    # C: conformal coverage
-    ax3 = fig.add_subplot(gs[1, 1]); yy = np.arange(len(cov))
-    ax3.axvline(0.9, color=INK2, lw=0.8, ls='--'); ax3.hlines(yy, cov.lo, cov.hi, color=C['aqua'], lw=1.2); ax3.scatter(cov.coverage, yy, s=14, color=C['aqua'], zorder=3, edgecolor=SURF, lw=0.4)
-    ax3.set_yticks([]); ax3.set_ylabel('one line per label', fontsize=6.4); ax3.set_xlim(0.87, 0.93); ax3.set_xlabel('Conformal set coverage (nominal 90%)'); ax3.grid(axis='y', alpha=0)
-    ax3.text(0.9, len(cov)-0.1, '14 labels', fontsize=6.4, color=MUTED, ha='center', va='bottom'); panel(ax3, 'C', -0.4)
-    save(fig, 'Fig2_information_value')
-
-# ============================================================== Figure 3: risk control holds
-def fig3():
-    g = rd('gate_at_guaranteed_risk'); g = g[g.method == 'ltt']; fr = rd('fresh_cohort_gate'); ex = rd('external_nih_gate'); cf = rd('critical_finding_guarantee')
-    fig, axs = plt.subplots(2, 2, figsize=(7.4, 5.2)); axs = axs.ravel()
-    def setup(ax, title, letter):
-        ax.axhline(1, color=C['red'], lw=1.0); ax.axhspan(1, 1.6, color=C['red'], alpha=0.06, lw=0); ax.set_ylim(0, 1.45); ax.set_ylabel('Observed risk / target')
-        ax.set_title(title, loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, letter, -0.14); ax.text(0.99, 0.985, 'above 1 = target exceeded', transform=ax.transAxes, ha='right', va='top', fontsize=6, color=C['red'])
-    labels = None
-    # A cross-fit
-    ax = axs[0]; setup(ax, 'Cross-fitted, 5,994 patients', 'A')
-    rows = [(h, a) for h in ['fn', 'severe'] for a in sorted(g[g.harm == h].alpha.unique())]; x = np.arange(len(rows)); labels = [('burden\n' if h == 'fn' else 'critical\n')+f'{a:g}' for h, a in rows]
-    for gate, col, mk, dx in [('U', C['blue'], 'o', -0.12), ('UDMS', C['violet'], 's', 0.12)]:
-        r = [num(g[(g.harm == h) & (g.alpha == a) & (g.gate == gate)].realised_risk.iloc[0])/a for h, a in rows]
-        ax.scatter(x+dx, r, s=24, color=col, marker=mk, label={'U': 'uncertainty only', 'UDMS': 'full signal set'}[gate], zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_xticks(x, labels, rotation=0); ax.legend(loc='upper left', ncol=2, handletextpad=0.2, columnspacing=0.8, bbox_to_anchor=(0, 0.93))
-    # B untouched
-    ax = axs[1]; setup(ax, 'Untouched MIMIC patients, n = 2,000', 'B')
-    for gate, col, mk, dx in [('U', C['blue'], 'o', -0.12), ('UDMS', C['violet'], 's', 0.12)]:
-        for i, (h, a) in enumerate(rows):
-            q = fr[(fr.harm == h) & (fr.alpha == a) & (fr.gate == gate)].iloc[0]
-            dotci(ax, 0, 0, 0, 0, col, size=0); ax.vlines(i+dx, q.risk_lo/a, q.risk_hi/a, color=col, lw=1.2); ax.scatter([i+dx], [q.risk/a], s=24, color=col, marker=mk, zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_xticks(x, labels)
-    # C external
-    ax = axs[2]; setup(ax, f"External NIH ChestX-ray14, n = {res['external_nih']['patients']:,}", 'C')
-    exu = ex[ex.gate == 'UDMS']; rowsx = [(h, a) for h in ['fn', 'severe'] for a in sorted(exu[exu.harm == h].alpha.unique())]; xx = np.arange(len(rowsx))
-    for col_r, col_hi, color, mk, dx, lab in [('risk_mimic_calibrated', 'risk_hi_mimic', C['orange'], 'o', -0.12, 'MIMIC calibration unchanged'), ('risk_nih_recalibrated', 'risk_hi_nih', C['aqua'], 's', 0.12, 'threshold recalibrated on NIH')]:
-        r = [exu[(exu.harm == h) & (exu.alpha == a)][col_r].iloc[0]/a for h, a in rowsx]; hi = [exu[(exu.harm == h) & (exu.alpha == a)][col_hi].iloc[0]/a for h, a in rowsx]
-        ax.vlines(xx+dx, r, hi, color=color, lw=1.0); ax.scatter(xx+dx, r, s=24, color=color, marker=mk, label=lab, zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_xticks(xx, [('burden\n' if h == 'fn' else 'critical\n')+f'{a:.3g}' for h, a in rowsx]); ax.legend(loc='upper left', handletextpad=0.2, bbox_to_anchor=(0, 0.93))
-    ax.text(0.99, 0.80, 'whiskers: upper 95% bound', transform=ax.transAxes, ha='right', fontsize=6, color=MUTED)
-    # D per-finding
-    ax = axs[3]; setup(ax, 'Per-finding bounds, one shared threshold', 'D')
-    labs = ['Edema', 'Consolidation', 'Pneumonia', 'Pneumothorax']; sh = cf[(cf.method == 'shared_score_single_threshold') & (cf.gate == 'UDMS')]
-    for frac, col, mk, dx, name in [(0.75, C['blue'], 'o', -0.12, 'target = 75% of answer-everything rate'), (0.5, C['violet'], 's', 0.12, 'target = 50% of answer-everything rate')]:
-        q = sh[sh.target_fraction == frac].iloc[0]; r = [q[f'risk_{l}']/q[f'target_{l}'] for l in labs]
-        ax.scatter(np.arange(4)+dx, r, s=26, color=col, marker=mk, label=name, zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_xticks(np.arange(4), labs, rotation=0, fontsize=6.6); ax.legend(loc='upper left', bbox_to_anchor=(0, 0.93), handletextpad=0.2)
-    for a in axs[:3]:
-        a.set_xlabel('Target (burden = severity-weighted missed findings; critical = critical-miss rate)', fontsize=6.6)
-    fig.tight_layout(h_pad=1.6, w_pad=1.6)
-    save(fig, 'Fig3_risk_control')
-
-# ============================================================== Figure 4: efficiency vs baselines
+# ============================================================== Fig. 4: what history and a lateral view are worth
 def fig4():
-    g = rd('gate_at_guaranteed_risk'); g = g[(g.method == 'ltt') & (g.harm == 'fn')]; p = rd('per_1000_patients')
-    fig = plt.figure(figsize=(7.6, 3.5)); gs = fig.add_gridspec(1, 2, width_ratios=[1.15, 1], wspace=0.75)
-    ax = fig.add_subplot(gs[0]); alphas = sorted(g.alpha.unique())
-    styles = [('oracle', 'oracle ceiling', MUTED, '--', 'none'), ('L2D_U', 'surrogate-loss deferral', C['magenta'], '-', 'v'), ('ambiguity', 'conformal ambiguity', C['orange'], '-', '^'),
-              ('entropy', 'entropy', C['aqua'], '-', 's'), ('U', 'uncertainty only', C['blue'], '-', 'o'), ('UDMS', 'full signal set', C['violet'], '-', 'D')]
-    ends = {}
-    for gate, lab, col, ls, mk in styles:
-        y = [100*num(g[(g.alpha == a) & (g.gate == gate)].referral.iloc[0]) for a in alphas]
-        ax.plot(alphas, y, color=col, ls=ls, lw=1.6 if gate not in ('U', 'UDMS') else 1.6, marker=mk if mk != 'none' else None, ms=3.8, zorder=3, mec=SURF, mew=0.4); ends[gate] = (y[-1], lab, col)
-    # direct labels at the right end with simple de-overlap
-    items = sorted(ends.items(), key=lambda kv: kv[1][0]); pos = []; last = -99
-    for k, (yv, lab, col) in items:
-        yy = max(yv, last+5.0); pos.append((yy, lab, col)); last = yy
-    for yy, lab, col in pos:
-        ax.text(alphas[-1]+0.0007, yy, lab, color=col, fontsize=6.6, va='center', fontweight='bold')
-    ax.set_xlim(alphas[0]-0.0005, alphas[-1]+0.0165); ax.set_xticks(alphas); ax.set_ylim(0, 100)
-    ax.set_xlabel('Target severity-weighted missed-finding burden (guaranteed)'); ax.set_ylabel('Patients escalated to a clinician (%)')
-    ax.set_title('Escalations at equal guaranteed risk', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'A', -0.17)
-    # B forest per 1000
-    ax2 = fig.add_subplot(gs[1]); comps = [('Full gate vs binary baseline', 'uncertainty-only gate', C['blue']), ('Full gate vs entropy deferral', 'entropy deferral', C['aqua']),
-                                           ('Full gate vs conformal-ambiguity deferral', 'conformal ambiguity', C['orange']), ('Full gate vs learning-to-defer surrogate baseline', 'surrogate-loss deferral', C['magenta'])]
-    for i, (key, lab, col) in enumerate(comps):
-        q = p[(p.harm == 'fn') & (p.alpha == 0.03) & (p.comparison == key)].iloc[0]
-        dotci(ax2, len(comps)-1-i, q.escalations_avoided_per_1000, q.lo, q.hi, col, size=26)
-        f = (lambda v: f"{v:.0f}" if abs(v) >= 20 else f"{v:.1f}"); ax2.text(1.03, len(comps)-1-i, f"{f(q.escalations_avoided_per_1000)}\n({f(q.lo)} to {f(q.hi)})", transform=ax2.get_yaxis_transform(), fontsize=6.2, va='center', color=INK2, linespacing=1.15)
-    ax2.set_xscale('symlog', linthresh=20, linscale=0.8); ax2.axvline(0, color=INK2, lw=0.8); ax2.set_yticks(np.arange(len(comps))[::-1], [c[1] for c in comps]); ax2.grid(axis='y', alpha=0)
-    ax2.set_xticks([-10, 0, 10, 100, 300]); ax2.set_xticklabels(['-10', '0', '10', '100', '300']); ax2.set_xlim(-25, 400)
-    ax2.set_xlabel('Escalations avoided per 1,000 patients\n(full signal set vs comparator; burden target 0.03)'); ax2.set_title('Gain of the full gate', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax2, 'B', -0.52)
-    save(fig, 'Fig4_efficiency')
+    cl = rd('classifier_per_label').sort_values('gain_context'); cov = rd('conformal_coverage'); cov = cov[cov.group == 'all'].set_index('label').reindex(cl.label)
+    v = res['value_of_information']; y = np.arange(len(cl))
+    fig = plt.figure(figsize=(7.4, 4.7)); gs = fig.add_gridspec(2, 3, width_ratios=[1.25, 1.25, 0.8], height_ratios=[3.4, 0.9], wspace=0.1, hspace=0.42)
+    axa = fig.add_subplot(gs[0, 0]); axb = fig.add_subplot(gs[0, 1], sharey=axa); axc = fig.add_subplot(gs[0, 2], sharey=axa)
+    for ax, base, new, col, mk in [(axa, cl.auroc_image_only_on_present, cl.auroc_image_plus_context, OCHRE, 'o'), (axb, cl.auroc_image_only_on_eligible, cl.auroc_image_plus_lateral, TEAL, 'D')]:
+        ax.hlines(y, base, new, color=col, lw=2.4, alpha=0.35, zorder=1)
+        ax.scatter(base, y, s=22, color=SURF, edgecolor=BLUE, linewidth=1.1, zorder=3)
+        ax.scatter(new, y, s=26, color=col, marker=mk, edgecolor=SURF, linewidth=0.5, zorder=4)
+        ax.set_xlim(0.48, 0.98); ax.set_xticks([0.5, 0.6, 0.7, 0.8, 0.9]); ax.set_xlabel('AUROC'); ygrid_off(ax)
+    axa.set_yticks(y, cl.label); axa.set_ylim(-0.7, len(cl)-0.3); axb.tick_params(labelleft=False); axc.tick_params(labelleft=False)
+    fig.legend(handles=legend_handles([(BLUE, 'o', False, 'frontal image alone', '', 0), (OCHRE, 'o', True, '+ clinical history', '', 0), (TEAL, 'D', True, '+ lateral view', '', 0)]),
+               loc='lower center', bbox_to_anchor=(0.5, -0.03), ncol=3, handletextpad=0.1, columnspacing=1.6)
+    axc.axvline(0.9, color=INK2, lw=0.8, ls=(0, (3, 2))); axc.hlines(y, cov.lo, cov.hi, color=NAVY, lw=1.3); axc.scatter(cov.coverage, y, s=16, color=NAVY, zorder=3, edgecolor=SURF, lw=0.4)
+    axc.set_xlim(0.875, 0.925); axc.set_xticks([0.88, 0.90, 0.92]); axc.set_xlabel('conformal coverage'); ygrid_off(axc)
+    for ax, s in [(axa, 'A'), (axb, 'B'), (axc, 'C')]: letter(ax, s, -0.02 if s != 'A' else -0.5)
+    axd = fig.add_subplot(gs[1, :]); zero(axd)
+    for i, (k, lab, col, mk) in enumerate([('context', 'clinical history', OCHRE, 'o'), ('lateral', 'lateral view', TEAL, 'D')]):
+        dot(axd, 1-i, v[k]['mean']*1e3, v[k]['lo']*1e3, v[k]['hi']*1e3, col, mk, 30, lw=2.0)
+    axd.set_yticks([1, 0], ['clinical history', 'lateral view']); axd.set_ylim(-0.6, 1.6); axd.set_xlim(-1.2, 5.2); ygrid_off(axd)
+    axd.set_xlabel('cost reduction per patient for routing (×10$^{-3}$)'); letter(axd, 'D', -0.17)
+    save(fig, 'Fig4_information_value')
 
-# ============================================================== Figure 5: extra signals and Ask actions
+
+# ============================================================== Fig. 5: realised risk against target
+def riskplot(ax, lo, hi):
+    ax.set_xscale('log'); ax.set_yscale('log'); ax.set_xlim(lo, hi); ax.set_ylim(lo, hi)
+    xs = np.array([lo, hi]); ax.fill_between(xs, xs, hi, color=BRICK, alpha=0.07, lw=0, zorder=0); ax.plot(xs, xs, color=BRICK, lw=1.0, zorder=1)
+    ax.set_xlabel('target'); ax.set_ylabel('realised risk'); ax.set_aspect('equal')
+    fmt = FuncFormatter(lambda v, _: f'{v:g}'); ax.xaxis.set_major_formatter(fmt); ax.yaxis.set_major_formatter(fmt)
+    ax.xaxis.set_minor_formatter(FuncFormatter(lambda v, _: '')); ax.yaxis.set_minor_formatter(FuncFormatter(lambda v, _: ''))
+HARM_MK = {'fn': 'o', 'severe': '^'}
+def rpoint(ax, a, r, hi=None, lo=None, color=NAVY, filled=True, harm='fn', dx=1.0, floor=None):
+    x = a*dx
+    if floor is not None and r < floor:
+        ax.scatter([x], [floor], marker='v', s=22, color=color if filled else SURF, edgecolor=color, lw=1.0, zorder=4); return
+    if hi is not None:
+        ax.vlines(x, lo if lo is not None else r, hi, color=color, lw=1.0, zorder=3)
+    ax.scatter([x], [r], marker=HARM_MK[harm], s=24, color=color if filled else SURF, edgecolor=SURF if filled else color, lw=0.6 if filled else 1.1, zorder=4)
+
+def fig5():
+    g = rd('gate_at_guaranteed_risk'); g = g[g.method == 'ltt']; fr = rd('fresh_cohort_gate'); ex = rd('external_nih_gate'); cf = rd('critical_finding_guarantee')
+    cx = pd.read_csv(RX/'cxp_gate.csv'); cx = cx[cx.gate == 'UDMS']
+    fig, axs = plt.subplots(2, 3, figsize=(7.4, 5.3)); axs = axs.ravel(); LO, HI = 0.003, 0.4
+    ax = axs[0]; riskplot(ax, LO, HI)
+    for gate, dx in [('U', 0.94), ('UDMS', 1.06)]:
+        for _, q in g[g.gate == gate].iterrows(): rpoint(ax, q.alpha, q.realised_risk, q.max_fold_risk, None, GATE[gate][0], True, q.harm, dx)
+    ax = axs[1]; riskplot(ax, LO, HI)
+    for gate, dx in [('U', 0.94), ('UDMS', 1.06)]:
+        for _, q in fr[fr.gate == gate].iterrows(): rpoint(ax, q.alpha, q.risk, q.risk_hi, q.risk_lo, GATE[gate][0], True, q.harm, dx)
+    ax = axs[2]; riskplot(ax, 0.0003, 0.05); exu = ex[ex.gate == 'UDMS']
+    for _, q in exu.iterrows():
+        rpoint(ax, q.alpha, q.risk_mimic_calibrated, q.risk_hi_mimic, None, OCHRE, False, q.harm, 0.94, floor=0.0004)
+        rpoint(ax, q.alpha, q.risk_nih_recalibrated, q.risk_hi_nih, None, TEAL, True, q.harm, 1.06)
+    for ax, sc in [(axs[3], 'natural'), (axs[4], 'image_only')]:
+        riskplot(ax, LO, HI)
+        for _, q in cx[cx.scenario == sc].iterrows():
+            rpoint(ax, q.alpha, q.risk_mimic_calibrated, q.risk_hi_mimic, None, OCHRE, False, q.harm, 0.94)
+            rpoint(ax, q.alpha, q.risk_cxp_recalibrated, q.risk_hi_cxp, None, TEAL, True, q.harm, 1.06)
+    ax = axs[5]; riskplot(ax, 0.001, 0.06); sh = cf[(cf.method == 'shared_score_single_threshold') & (cf.gate == 'UDMS')]
+    fmk = {'Edema': 'o', 'Consolidation': 's', 'Pneumonia': '^', 'Pneumothorax': 'D'}
+    for frac, filled in [(0.75, False), (0.5, True)]:
+        q = sh[sh.target_fraction == frac].iloc[0]
+        for l, m in fmk.items():
+            ax.scatter([q[f'target_{l}']], [q[f'risk_{l}']], marker=m, s=24, color=NAVY if filled else SURF, edgecolor=NAVY, lw=1.0, zorder=4)
+    ax.legend(handles=legend_handles([(NAVY, m, True, l, '', 0) for l, m in fmk.items()] + [(NAVY, 'o', False, '75% of answer-all', '', 0), (NAVY, 'o', True, '50% of answer-all', '', 0)]),
+              loc='upper left', fontsize=6, handletextpad=0.1, labelspacing=0.3)
+    for i, ax in enumerate(axs): letter(ax, 'ABCDEF'[i], -0.12)
+    h = legend_handles([(BLUE, 'o', True, 'uncertainty only', '', 0), (NAVY, 'o', True, 'full signal set', '', 0), (OCHRE, 'o', False, 'MIMIC threshold kept', '', 0),
+                        (TEAL, 'o', True, 'threshold recalibrated locally', '', 0), (GREY, 'o', True, 'burden', '', 0), (GREY, '^', True, 'critical-miss rate', '', 0)])
+    fig.legend(handles=h, loc='lower center', ncol=6, bbox_to_anchor=(0.5, -0.03), handletextpad=0.1, columnspacing=1.0)
+    fig.tight_layout(h_pad=1.2, w_pad=1.4, rect=(0, 0.04, 1, 1))
+    save(fig, 'Fig5_risk_control')
+
+
+# ============================================================== Fig. 6: risk-coverage curves and cohort slopegraph
+def fig6():
+    g = rd('gate_at_guaranteed_risk'); g = g[g.method == 'ltt']
+    cg = pd.read_csv(RX/'cxp_gate.csv'); cg = cg[(cg.scenario == 'natural') & (cg.harm == 'fn') & (cg.alpha == 0.03)].set_index('gate')
+    fig = plt.figure(figsize=(7.4, 3.0)); gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 0.82], wspace=0.42)
+    for j, harm in enumerate(['fn', 'severe']):
+        ax = fig.add_subplot(gs[j])
+        for gate in ['oracle', 'L2D_U', 'ambiguity', 'entropy', 'U', 'UDMS']:
+            col, lab, mk = GATE[gate]; q = g[(g.harm == harm) & (g.gate == gate)].sort_values('alpha')
+            ax.plot(100*(1-q.referral), q.realised_risk, color=col, ls='--' if gate == 'oracle' else '-', lw=1.8 if gate == 'UDMS' else 1.3,
+                    marker=mk, ms=3.6, mec=SURF, mew=0.4, zorder=4 if gate == 'UDMS' else 3)
+        ax.set_xlim(0, 100); ax.set_xlabel('answered automatically (%)'); ax.set_ylabel('realised burden' if harm == 'fn' else 'realised critical-miss rate')
+        ax.set_ylim(0, None); letter(ax, 'AB'[j], -0.18)
+    ax = fig.add_subplot(gs[2]); ax.grid(False); ax.spines['bottom'].set_visible(False)
+    for k in ['L2D_U', 'ambiguity', 'entropy', 'U', 'UDMS']:
+        col = GATE[k][0]; m = 100*g[(g.harm == 'fn') & (g.alpha == 0.03) & (g.gate == k)].referral.iloc[0]; c = 100*cg.loc[k, 'referral_cxp_recalibrated']
+        ax.plot([0, 1], [m, c], color=col, lw=1.8 if k == 'UDMS' else 1.3, marker='o', ms=4, mec=SURF, mew=0.5)
+    ax.set_xticks([0, 1], ['MIMIC', 'CheXpert\nPlus']); ax.tick_params(axis='x', length=0); ax.set_xlim(-0.25, 1.25)
+    ax.set_ylim(0, 100); ax.set_ylabel('escalated at burden 0.03 (%)'); ax.yaxis.grid(True, color=GRID); letter(ax, 'C', -0.3)
+    fig.legend(handles=legend_handles([(GATE[k][0], GATE[k][2] or '', True, GATE[k][1], '--' if k == 'oracle' else '-', 1.4) for k in ['UDMS', 'U', 'entropy', 'ambiguity', 'L2D_U', 'oracle']]),
+               loc='lower center', bbox_to_anchor=(0.5, -0.1), ncol=6, handlelength=1.8, handletextpad=0.3, columnspacing=1.1)
+    save(fig, 'Fig6_efficiency')
+
+
+# ============================================================== Fig. 7: forest plots and break-even heatmap
 def parse_cost(s):
     m = re.match(r'([+-][\d.]+) \[([+-][\d.]+),([+-][\d.]+)\]', s); return tuple(float(x) for x in m.groups())
-def fig5():
+def fig7():
     rq = rd('rq1_referral_contrasts'); ens = rd('ensemble_signal_contrasts'); sd = rd('seed_stability'); sr = rd('scheme_robustness'); grid = rd('ask_break_even_grid')
-    fig, axs = plt.subplots(2, 2, figsize=(7.4, 5.4)); ax = axs[0, 0]
-    # A primary endpoint
-    q = rq[(rq.harm == 'fn') & (rq.alpha == 0.03) & (rq.contrast == 'Full gate vs binary baseline')].iloc[0]; fcon = rd('fresh_cohort_contrast'); f3 = fcon[(fcon.harm == 'fn') & (fcon.alpha == 0.03)].iloc[0]
-    rows = [('Cross-fit pooled', q.delta_referral*100, q.lo*100, q.hi*100, C['violet']), ('Untouched MIMIC', f3.delta_referral_full_vs_U*100, f3.lo*100, f3.hi*100, C['violet'])]
-    for i, (lab, m, lo, hi, col) in enumerate(rows): dotci(ax, 4-i, m, lo, hi, col, size=28)
-    for j in range(3):
-        ax.scatter([sd.full_vs_binary.iloc[j]*100], [2-j], s=28, color=C['blue'], marker='D', zorder=4, edgecolor=SURF, lw=0.6)
-    ax.axvline(0, color=INK2, lw=0.8); ax.set_yticks([4, 3, 2, 1, 0], ['Cross-fit pooled\n(95% CI)', 'Untouched MIMIC\n(95% CI)', 'Fold assignment 1', 'Fold assignment 2', 'Fold assignment 3']); ax.grid(axis='y', alpha=0)
-    ax.set_xlabel('Change in escalation rate, full vs uncertainty-only (percentage points)'); ax.set_xlim(-1.2, 1.0); ax.set_ylim(-0.6, 5.1)
-    ax.set_title('Primary endpoint: no stable difference', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'A', -0.38); ax.text(0.02, 0.985, 'left of 0 = full gate escalates fewer', transform=ax.transAxes, fontsize=6, color=MUTED, va='top')
-    # B signals
-    ax = axs[0, 1]; items = [('D adds to U', 'cross-modal disagreement D'), ('M adds to U+D', 'missing context M'), ('S adds to U+D+M', 'severity S')]
-    rows = [(lab, rq[(rq.harm == 'fn') & (rq.alpha == 0.03) & (rq.contrast == key)].iloc[0]) for key, lab in items]
-    e1 = ens[(ens.harm == 'fn') & (ens.alpha == 0.03) & (ens.contrast == 'E adds to U')].iloc[0]; e2 = ens[(ens.harm == 'fn') & (ens.alpha == 0.03) & (ens.contrast == 'E adds to U+D+M+S')].iloc[0]
-    rows += [('ensemble spread E (on U)', e1), ('ensemble spread E (on all)', e2)]
-    for i, (lab, r) in enumerate(rows): dotci(ax, len(rows)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, C['violet'] if i < 3 else C['aqua'], size=26)
-    ax.axvline(0, color=INK2, lw=0.8); ax.set_yticks(np.arange(len(rows))[::-1], [r[0] for r in rows]); ax.grid(axis='y', alpha=0); ax.set_ylim(-0.6, len(rows)-0.4)
-    ax.set_xlabel('Change in escalation rate when the signal is added\n(percentage points; burden target 0.03)'); ax.set_title('Signals added to uncertainty', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'B', -0.4)
-    # C Ask by scenario
-    ax = axs[1, 0]; names = {'natural': 'History available (natural)', 'mcar30': '30% withheld at random', 'mcar60': '60% withheld at random', 'struct40': '40% withheld, structured\n(scheme unseen in training)'}
+    cc = pd.read_csv(RX/'cxp_contrasts.csv'); ca = pd.read_csv(RX/'cxp_ask.csv'); sel = lambda df: df[(df.harm == 'fn') & (df.alpha == 0.03)]
+    fig, axs = plt.subplots(2, 2, figsize=(7.4, 5.2), gridspec_kw=dict(width_ratios=[1, 1]))
+    ax = axs[0, 0]; zero(ax); q = sel(rq)[sel(rq).contrast == 'Full gate vs binary baseline'].iloc[0]; f3 = sel(rd('fresh_cohort_contrast')).iloc[0]; c3 = sel(cc)[sel(cc).comparison == 'UDMS vs U'].iloc[0]
+    for i, (m, lo, hi, col) in enumerate([(q.delta_referral, q.lo, q.hi, NAVY), (f3.delta_referral_full_vs_U, f3.lo, f3.hi, NAVY), (c3.delta_referral, c3.lo, c3.hi, TEAL)]):
+        dot(ax, 5-i, m*100, lo*100, hi*100, col, size=30, lw=1.8)
+    for j in range(3): dot(ax, 2-j, sd.full_vs_binary.iloc[j]*100, color=BLUE, marker='D', size=22)
+    ax.set_yticks([5, 4, 3, 2, 1, 0], ['MIMIC cross-fit', 'untouched MIMIC', 'CheXpert Plus', 'fold assignment 1', 'fold assignment 2', 'fold assignment 3'])
+    ax.set_ylim(-0.6, 5.6); ax.set_xlim(-1.2, 1.0); ax.set_xlabel('Δ escalation, full vs uncertainty only (pp)'); ygrid_off(ax); letter(ax, 'A', -0.42)
+    ax = axs[0, 1]; zero(ax); items = [('D adds to U', 'disagreement D'), ('M adds to U+D', 'missing context M'), ('S adds to U+D+M', 'severity S')]
+    rr = [(lab, sel(rq)[sel(rq).contrast == key].iloc[0]) for key, lab in items]
+    rr += [('ensemble E (on U)', sel(ens)[sel(ens).contrast == 'E adds to U'].iloc[0]), ('ensemble E (on all)', sel(ens)[sel(ens).contrast == 'E adds to U+D+M+S'].iloc[0])]
+    for i, (lab, r) in enumerate(rr): dot(ax, len(rr)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, VERDICT.get(r.verdict_holm, GREY), size=28, lw=1.8)
+    ax.set_yticks(np.arange(len(rr))[::-1], [r[0] for r in rr]); ax.set_ylim(-0.6, len(rr)-0.4); ax.set_xlabel('Δ escalation when added (pp)'); ygrid_off(ax); letter(ax, 'B', -0.42)
+    ax = axs[1, 0]; zero(ax); names = {'mcar30': '30% withheld at random', 'mcar60': '60% withheld at random', 'struct40': '40% withheld, structured'}
     ys = []
-    for i, sc in enumerate(['natural', 'mcar30', 'mcar60', 'struct40']):
-        m, lo, hi = parse_cost(sr[sr.scheme == sc].ask_context_budget_cost.iloc[0]); y = 5-i; ys.append((y, names[sc]))
-        if hi - lo > 0: dotci(ax, y, m*1e4, lo*1e4, hi*1e4, C['blue'], size=28)
-        else: ax.scatter([0], [y], s=28, color=C['blue'], marker='o', zorder=4)
-    fa = res['fresh_ask_context']; dotci(ax, 0.9, fa['delta_cost']*1e4, fa['lo']*1e4, fa['hi']*1e4, C['aqua'], size=28, marker='s'); ys.append((0.9, 'Untouched MIMIC patients'))
-    ax.axvline(0, color=INK2, lw=0.8); ax.set_yticks([y for y, _ in ys], [n for _, n in ys]); ax.grid(axis='y', alpha=0); ax.set_ylim(0.2, 6.1)
-    ax.set_xlabel('Change in routing cost when asking for history\n(x10$^{-4}$ cost units; budget 0.3, request cost 0.10)'); ax.set_title('Asking for clinical history', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'C', -0.45)
-    ax.text(0.98, 0.985, 'left of 0 = asking lowers cost', transform=ax.transAxes, fontsize=6, color=MUTED, ha='right', va='top')
-    # D heatmap
-    ax = axs[1, 1]; gh = grid[(grid.request == 'context') & (grid.budget == 0.3)]; pv = gh.pivot_table(index='a', columns='f', values='delta_cost')*1e4; vt = gh.pivot_table(index='a', columns='f', values='verdict', aggfunc='first')
-    cmap = LinearSegmentedColormap.from_list('div', [C['blue'], '#f0efec', C['red']]); lim = np.abs(pv.values).max()
+    for i, sc in enumerate(['mcar30', 'mcar60', 'struct40']):
+        m, lo, hi = parse_cost(sr[sr.scheme == sc].ask_context_budget_cost.iloc[0]); dot(ax, 4-i, m*1e4, lo*1e4, hi*1e4, OCHRE, size=28, lw=1.8); ys.append((4-i, names[sc]))
+    fa = res['fresh_ask_context']; dot(ax, 1, fa['delta_cost']*1e4, fa['lo']*1e4, fa['hi']*1e4, OCHRE, 's', 26, lw=1.8); ys.append((1, 'untouched MIMIC'))
+    a3 = ca[ca.action == 'ask_context'].iloc[0]; dot(ax, 0, a3.delta_cost*1e4, a3.lo*1e4, a3.hi*1e4, TEAL, 'o', 28, lw=1.8); ys.append((0, 'CheXpert Plus, 30% withheld'))
+    ax.set_yticks([y for y, _ in ys], [n for _, n in ys]); ax.set_ylim(-0.6, 4.6); ax.set_xlim(-12.5, 4.5); ax.set_xlabel('Δ routing cost when asking (×10$^{-4}$)'); ygrid_off(ax); letter(ax, 'C', -0.42)
+    ax = axs[1, 1]; gh = grid[(grid.request == 'context') & (grid.budget == 0.3)]
+    pv = gh.pivot_table(index='a', columns='f', values='delta_cost')*1e4; vt = gh.pivot_table(index='a', columns='f', values='verdict', aggfunc='first')
+    cmap = LinearSegmentedColormap.from_list('div', [TEAL, '#F4F6F7', BRICK]); lim = np.abs(pv.values).max()
     im = ax.imshow(pv.values, cmap=cmap, norm=TwoSlopeNorm(0, -lim, lim), aspect='auto'); ax.grid(False)
-    ax.set_xticks(range(pv.shape[1]), [f'{c:g}' for c in pv.columns]); ax.set_yticks(range(pv.shape[0]), [f'{c:g}' for c in pv.index])
+    for s_ in ax.spines.values(): s_.set_visible(False)
+    ax.set_xticks(range(pv.shape[1]), [f'{c:g}' for c in pv.columns]); ax.set_yticks(range(pv.shape[0]), [f'{c:g}' for c in pv.index]); ax.tick_params(length=0)
     for i in range(pv.shape[0]):
         for j in range(pv.shape[1]):
-            v = vt.values[i, j]; mark = {'better': '↓', 'worse': '↑'}.get(v, '')
-            ax.text(j, i, f'{pv.values[i, j]:.1f}{mark}', ha='center', va='center', fontsize=6.4, color=INK)
-    ax.set_xlabel('Retrieval failure probability'); ax.set_ylabel('Request workload (fraction of a full review)'); ax.set_title('Cost change by request cost (x10$^{-4}$)', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'D', -0.38)
-    cb = fig.colorbar(im, ax=ax, fraction=0.05, pad=0.03); cb.ax.tick_params(labelsize=6); cb.outline.set_visible(False)
-    ax.text(0.5, -0.33, '↓ significantly lower cost with asking   ↑ significantly higher', transform=ax.transAxes, fontsize=6, color=MUTED, ha='center')
-    fig.tight_layout(h_pad=2.0, w_pad=1.6)
-    save(fig, 'Fig5_signals_and_ask')
+            sig = vt.values[i, j] in ('better', 'worse'); val = pv.values[i, j]
+            ax.text(j, i, f'{val:+.1f}', ha='center', va='center', fontsize=7 if sig else 6.4, fontweight='bold' if sig else 'normal', color=SURF if abs(val) > 0.6*lim else INK)
+            if sig: ax.add_patch(plt.Rectangle((j-0.48, i-0.48), 0.96, 0.96, fill=False, ec=INK, lw=1.0))
+    ax.set_xlabel('request failure probability'); ax.set_ylabel('request workload'); letter(ax, 'D', -0.25)
+    cb = fig.colorbar(im, ax=ax, fraction=0.05, pad=0.03); cb.ax.tick_params(labelsize=6, length=2); cb.outline.set_visible(False); cb.set_label('Δ cost (×10$^{-4}$)', fontsize=6.6)
+    fig.tight_layout(h_pad=2.2, w_pad=2.4)
+    save(fig, 'Fig7_signals_and_ask')
 
-# ============================================================== Figure 6: subgroups
-def fig6():
-    sg = rd('mimic_subgroup_risk', RB); au = rd('mimic_subgroup_auroc', RB).set_index('group')
-    order = ['sex=F', 'sex=M', 'age<40', 'age 40-64', 'age>=65', 'race=WHITE', 'race=BLACK', 'race=HISPANIC', 'race=ASIAN', 'race=OTHER/UNKNOWN']
-    nice = {'sex=F': 'Women', 'sex=M': 'Men', 'age<40': 'Age < 40', 'age 40-64': 'Age 40-64', 'age>=65': 'Age ≥ 65', 'race=WHITE': 'White', 'race=BLACK': 'Black', 'race=HISPANIC': 'Hispanic', 'race=ASIAN': 'Asian', 'race=OTHER/UNKNOWN': 'Other / unknown'}
-    u = sg[sg.gate == 'UDMS']; y = np.arange(len(order))[::-1]
-    fig, axs = plt.subplots(1, 4, figsize=(7.4, 3.8), sharey=True, gridspec_kw=dict(wspace=0.12))
-    ax = axs[0]
-    ax.scatter([au.loc[o, 'macro_auroc'] for o in order], y, s=24, color=C['blue'], zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_yticks(y, [f'{nice[o]}  (n={int(u[u.group == o].n.iloc[0]):,})' for o in order]); ax.set_xlim(0.74, 0.9); ax.set_xlabel('Macro-AUROC'); ax.grid(axis='y', alpha=0); panel(ax, 'A', -1.0)
-    ax.set_title('Classifier quality', loc='left', fontsize=8, fontweight='bold', pad=6)
-    ax = axs[1]; q = u[(u.harm == 'fn') & (u.alpha == 0.03)].set_index('group')
-    ax.barh(y, [100*q.loc[o, 'referral'] for o in order], color=C['orange'], height=0.6); ax.set_xlabel('Escalated (%)'); ax.grid(axis='y', alpha=0); panel(ax, 'B', -0.12)
-    ax.set_title('Escalation share', loc='left', fontsize=8, fontweight='bold', pad=6)
-    for ax, harm, alpha, letter, title in [(axs[2], 'fn', 0.03, 'C', 'Burden (target 0.03)'), (axs[3], 'severe', 0.10, 'D', 'Critical misses (target 0.10)')]:
-        q = u[(u.harm == harm) & (u.alpha == alpha)].set_index('group')
-        for yy, o in zip(y, order):
-            r = q.loc[o]; col = C['red'] if r.risk/alpha > 1 else C['violet']
-            ax.hlines(yy, r.lo/alpha, r.hi/alpha, color=col, lw=1.2); ax.scatter([r.risk/alpha], [yy], s=24, color=col, zorder=3, edgecolor=SURF, lw=0.5)
-        ax.axvline(1, color=C['red'], lw=1.0); ax.set_xlim(0, 1.4); ax.set_xlabel('Observed risk / target'); ax.grid(axis='y', alpha=0); panel(ax, letter, -0.12)
-        ax.set_title(title, loc='left', fontsize=7.6, fontweight='bold', pad=6)
+
+# ============================================================== Fig. 8 and S4: subgroup forest plots
+def subgroups(rows, auroc, n, order, nice, name, xlim):
+    y = np.arange(len(order))[::-1]
+    fig, axs = plt.subplots(1, 4, figsize=(7.4, 3.4), sharey=True, gridspec_kw=dict(wspace=0.14))
+    ax = axs[0]; ax.scatter([auroc[o] for o in order], y, s=26, color=NAVY, zorder=3, edgecolor=SURF, lw=0.5)
+    ax.set_yticks(y, [f'{nice[o]}  ({n[o]:,})' for o in order]); ax.set_xlim(*xlim); ax.set_xlabel('macro-AUROC'); ygrid_off(ax); letter(ax, 'A', -0.04)
+    q = rows[(rows.harm == 'fn') & (rows.alpha == 0.03)].set_index('group')
+    ax = axs[1]; ax.barh(y, [100*q.loc[o, 'referral'] for o in order], color=OCHRE, height=0.58); ygrid_off(ax)
+    for y0, o in zip(y, order): ax.text(100*q.loc[o, 'referral']+1.2, y0, f"{100*q.loc[o, 'referral']:.0f}", va='center', fontsize=6.2, color=INK2)
+    ax.set_xlabel('escalated (%)'); ax.set_xlim(0, 100*q.referral.max()*1.25); letter(ax, 'B', -0.04)
+    for ax, harm, alpha, s in [(axs[2], 'fn', 0.03, 'C'), (axs[3], 'severe', 0.10, 'D')]:
+        qq = rows[(rows.harm == harm) & (rows.alpha == alpha)].set_index('group')
+        ax.axvspan(1, 2, color=BRICK, alpha=0.07, lw=0); ax.axvline(1, color=BRICK, lw=1.0)
+        for y0, o in zip(y, order):
+            r = qq.loc[o]; dot(ax, y0, r.risk/alpha, r.lo/alpha, r.hi/alpha, BRICK if r.risk/alpha > 1 else NAVY, size=24, lw=1.3)
+        ax.set_xlim(0, 1.45); ax.set_xlabel('burden / target 0.03' if harm == 'fn' else 'critical misses / target 0.10'); ygrid_off(ax); letter(ax, s, -0.04)
     for ax in axs:
         for yy in [y[1]-0.5, y[4]-0.5]: ax.axhline(yy, color=AXIS, lw=0.6)
-    fig.text(0.5, -0.03, 'Escalation share and risks are for the full signal set. Whiskers: 95% interval; red = point estimate above target. AUROC averages the labels with at least 20 positives and negatives (6-14 per group).\nThe guarantee is marginal (over all patients), not per subgroup.', ha='center', fontsize=6.4, color=MUTED)
-    save(fig, 'Fig6_subgroups')
+    save(fig, name)
+
+def fig8():
+    sg = rd('mimic_subgroup_risk', RB); au = rd('mimic_subgroup_auroc', RB).set_index('group'); u = sg[sg.gate == 'UDMS']
+    order = ['sex=F', 'sex=M', 'age<40', 'age 40-64', 'age>=65', 'race=WHITE', 'race=BLACK', 'race=HISPANIC', 'race=ASIAN', 'race=OTHER/UNKNOWN']
+    nice = dict(zip(order, ['Women', 'Men', 'Age < 40', 'Age 40-64', 'Age ≥ 65', 'White', 'Black', 'Hispanic', 'Asian', 'Other / unknown']))
+    subgroups(u, au.macro_auroc.to_dict(), {o: int(u[u.group == o].n.iloc[0]) for o in order}, order, nice, 'Fig8_subgroups', (0.74, 0.90))
+
+def figS4():
+    u = pd.read_csv(RX/'cxp_subgroups.csv'); u = u[u.gate == 'UDMS']
+    order = ['sex=F', 'sex=M', 'age<40', 'age 40-64', 'age>=65', 'race=White', 'race=Black', 'race=Hispanic', 'race=Asian', 'race=Other/unknown']
+    nice = dict(zip(order, ['Women', 'Men', 'Age < 40', 'Age 40-64', 'Age ≥ 65', 'White', 'Black', 'Hispanic', 'Asian', 'Other / unknown']))
+    base = u[(u.harm == 'fn') & (u.alpha == 0.03)].set_index('group')
+    subgroups(u, base.macro_auroc.to_dict(), {o: int(base.loc[o, 'n']) for o in order}, order, nice, 'FigS4_subgroups_chexpert_plus', (0.66, 0.82))
+
 
 # ============================================================== Supplement
 def figS1():
-    d = rd('decision_curve'); fig, ax = plt.subplots(figsize=(3.6, 3.0))
-    sty = [('random', 'random', MUTED, ':'), ('binary_entropy', 'entropy', C['aqua'], '-'), ('binary_L2D', 'surrogate-loss', C['magenta'], '-'), ('binary_U', 'uncertainty only', C['blue'], '-'), ('binary_UDMS', 'full signal set', C['violet'], '-'), ('oracle_binary', 'oracle', MUTED, '--')]
-    for k, lab, col, ls in sty:
-        r = d[d.policy == k]; ax.plot(r.price_of_workload, r.net_benefit, color=col, ls=ls, lw=1.5, label=lab)
-    ax.set_xlabel('Price of one unit of clinician workload'); ax.set_ylabel('Net benefit (cost avoided - price x workload)'); ax.legend(loc='upper right', fontsize=6.4)
+    d = rd('decision_curve'); fig, ax = plt.subplots(figsize=(4.0, 2.9))
+    sty = [('binary_UDMS', 'full signal set', NAVY, '-'), ('binary_U', 'uncertainty only', BLUE, '-'), ('binary_entropy', 'entropy', TEAL, '-'),
+           ('binary_L2D', 'surrogate learning-to-defer', BRICK, '-'), ('oracle_binary', 'oracle', GREY, '--'), ('random', 'random', GREY, ':')]
+    for k, lab, col, ls in sty[::-1]:
+        r = d[d.policy == k]; ax.plot(r.price_of_workload, r.net_benefit*1e3, color=col, ls=ls, lw=1.8 if k == 'binary_UDMS' else 1.3)
+    ax.legend(handles=legend_handles([(c, '', True, l, ls, 1.5) for _, l, c, ls in sty]), loc='upper right', handlelength=2.2, fontsize=6.4)
+    ax.set_xlabel('price of one unit of clinician workload'); ax.set_ylabel('net benefit (×10$^{-3}$)'); ax.set_ylim(-2, None)
     save(fig, 'FigS1_decision_curve')
+
 def figS2():
-    tr = rd('external_nih_transfer_auroc'); ct = rd('external_nih_contrast'); ct = ct[ct.comparison == 'Full gate vs U']
-    fig, axs = plt.subplots(1, 2, figsize=(7.2, 3.0), gridspec_kw=dict(width_ratios=[1, 1.1], wspace=0.7)); ax = axs[0]; tr = tr.sort_values('auroc_image_only'); y = np.arange(len(tr))
-    ax.hlines(y, 0.5, tr.auroc_image_only, color=C['orange'], lw=1.0, alpha=0.4); ax.scatter(tr.auroc_image_only, y, s=26, color=C['orange'], zorder=3, edgecolor=SURF, lw=0.5)
-    ax.set_yticks(y, [f"{l}  ({100*p:.1f}%)" for l, p in zip(tr.label, tr.prevalence)]); ax.set_xlim(0.5, 0.9); ax.set_xlabel('AUROC of the MIMIC-trained image head'); ax.grid(axis='y', alpha=0); panel(ax, 'A', -0.62)
-    ax.set_title('Transfer to NIH (prevalence)', loc='left', fontsize=8, fontweight='bold', pad=6)
-    ax = axs[1]; ct = ct.reset_index(drop=True)
-    for i, r in ct.iterrows():
-        col = {'better': C['green'], 'worse': C['red']}.get(r.verdict_holm, MUTED); dotci(ax, len(ct)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, col, size=24)
-    ax.axvline(0, color=INK2, lw=0.8); ax.set_yticks(np.arange(len(ct))[::-1], [('burden ' if h == 'fn' else 'critical ')+f'{a:.3g}' for h, a in zip(ct.harm, ct.alpha)]); ax.grid(axis='y', alpha=0)
-    ax.set_xlabel('Change in escalation rate (pp)'); ax.set_title('Full vs uncertainty-only gate', loc='left', fontsize=8, fontweight='bold', pad=6); panel(ax, 'B', -0.4)
-    ax.text(0.98, 0.36, 'green = fewer, red = more\nescalations (Holm-adjusted)', transform=ax.transAxes, fontsize=6, color=MUTED, ha='right')
-    save(fig, 'FigS2_external_nih')
+    mi = rd('classifier_per_label').set_index('label').auroc_image_only
+    nih = rd('external_nih_transfer_auroc').set_index('label').auroc_image_only
+    tr = pd.read_csv(RX/'cxp_transfer_auroc.csv'); cx = tr[tr.input == 'img'].set_index('label').auroc
+    fig, axs = plt.subplots(1, 2, figsize=(7.2, 3.5))
+    for ax, ext, s in [(axs[0], nih, 'A'), (axs[1], cx, 'B')]:
+        ax.plot([0.45, 1], [0.45, 1], color=INK2, lw=0.8, ls=(0, (3, 2)), zorder=1); ax.fill_between([0.45, 1], [0.45, 1], 0.45, color=BRICK, alpha=0.05, lw=0)
+        xs = mi.reindex(ext.index); ax.scatter(xs, ext, s=26, color=BLUE, edgecolor=SURF, lw=0.5, zorder=3)
+        off = {'A': {'Pneumothorax': (-5, -4, 'right')}, 'B': {'Cardiomegaly': (-4, 3, 'right'), 'Pneumothorax': (-5, -4, 'right'), 'Atelectasis': (3, -9, 'left'), 'Fracture': (3, -9, 'left')}}[s]
+        for lab in ext.index:
+            dx, dy, ha = off.get(lab, (3, 2, 'left'))
+            ax.annotate(lab, (xs[lab], ext[lab]), xytext=(dx, dy), textcoords='offset points', fontsize=5.6, color=INK2, ha=ha)
+        ax.set_xlim(0.58, 0.97); ax.set_ylim(0.45, 0.92); ax.set_xlabel('AUROC on MIMIC (cross-fitted)'); ax.set_ylabel('external AUROC'); letter(ax, s, -0.12)
+    save(fig, 'FigS2_transfer')
+
+def figS3():
+    nih = rd('external_nih_contrast'); nih = nih[nih.comparison == 'Full gate vs U']; cc = pd.read_csv(RX/'cxp_contrasts.csv'); cc = cc[cc.comparison == 'UDMS vs U']
+    fig, axs = plt.subplots(1, 2, figsize=(7.2, 3.0), gridspec_kw=dict(wspace=0.55))
+    for ax, ct, s in [(axs[0], nih, 'A'), (axs[1], cc, 'B')]:
+        zero(ax); ct = ct.reset_index(drop=True)
+        for i, r in ct.iterrows(): dot(ax, len(ct)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, VERDICT.get(r.verdict_holm, GREY), size=26, lw=1.8)
+        ax.set_yticks(np.arange(len(ct))[::-1], [('burden ' if h == 'fn' else 'critical ')+f'{a:.3g}' for h, a in zip(ct.harm, ct.alpha)]); ygrid_off(ax)
+        ax.set_xlabel('Δ escalation, full vs uncertainty only (pp)'); letter(ax, s, -0.3)
+    fig.legend(handles=legend_handles([(TEAL, 'o', True, 'fewer escalations', '', 0), (BRICK, 'o', True, 'more escalations', '', 0), (GREY, 'o', True, 'inconclusive (Holm)', '', 0)]),
+               loc='lower center', ncol=3, bbox_to_anchor=(0.5, -0.08), handletextpad=0.1)
+    save(fig, 'FigS3_external_contrasts')
+
 
 if __name__ == '__main__':
-    for f in [fig1, fig2, fig3, fig4, fig5, fig6, figS1, figS2]:
+    for f in [fig4, fig5, fig6, fig7, fig8, figS1, figS2, figS3, figS4]:
         f()
