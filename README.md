@@ -1,6 +1,6 @@
 # Adaptive Risk Gate
 
-Code, aggregate results and figures for **"Risk-controlled oversight for multimodal chest-radiograph AI: finite-sample guarantees for escalation and critical-finding risk, and the limited value of requesting more information"** (Abdur Rahman, 2026; manuscript in preparation for the *Journal of Biomedical Informatics*).
+Code, aggregate results and figures for **"Bounding missed findings when chest radiograph AI defers to clinicians, and when asking for more information helps"** (Abdur Rahman, 2026; manuscript in preparation for the *Journal of Biomedical Informatics*).
 
 An oversight layer routes each chest-radiograph case to **Answer**, **Escalate** or **Ask**. The escalation threshold is calibrated with Learn-then-Test so that the severity-weighted missed-finding burden among automatically answered cases stays below a chosen target, with simultaneous bounds for four critical findings (edema, consolidation, pneumonia, pneumothorax). The study then asks whether extra routing signals or requests for more information (clinical history, a lateral view) improve on calibrated uncertainty alone.
 
