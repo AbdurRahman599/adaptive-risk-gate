@@ -14,7 +14,7 @@ An oversight layer routes each chest-radiograph case to **Answer**, **Escalate**
 | Does it transfer to other hospitals? | NIH ChestX-ray14 (6,000 patients, image only): **6/6** with the MIMIC threshold unchanged. CheXpert Plus (6,000 patients): only **2/8** with the MIMIC threshold, **8/8** after recalibrating the threshold on 1,949 local patients |
 | How many escalations are needed? | At burden target 0.03: **29.6%** (calibrated uncertainty) vs 30.7% entropy, 54.0% conformal ambiguity, 58-60% surrogate learning-to-defer |
 | Do extra signals help? | Cross-modal disagreement, missing context, severity and ensemble spread: no reliable gain (primary endpoint −2.8 escalations per 1,000; 95% CI −7.5 to +1.8; Holm p = 1.0) |
-| Is asking for information worth it? | History raises macro-AUROC 0.776 → 0.835, but asking for it changes routing cost negligibly; worthwhile only when a request costs about 10% of a full review or less |
+| Is asking for information worth it? | History raises macro-AUROC 0.776 → 0.835, but asking for it changes routing cost negligibly; at the primary workload budget it helped only for cheap requests (about 10% of a full review or less), and more broadly only when escalation capacity was tight |
 | Is it fair across subgroups? | Point target met in 77/80 MIMIC and 78/80 CheXpert Plus subgroup configurations; the guarantee is marginal, not subgroup-conditional |
 
 Main message: finite-sample risk control gives efficient, auditable oversight, but under dataset shift the threshold should be **recalibrated on local patients** before deployment. All results are retrospective and simulated (assumed request costs, no clinicians in the loop).
