@@ -1,0 +1,168 @@
+{
+  "external_chexpert_plus": {
+    "patients": 6000,
+    "context_present": 0.9743333333333334,
+    "lateral_available": 0.23366666666666666,
+    "cal_patients": 1949,
+    "test_patients": 4051,
+    "macro_auroc_image": 0.7169665017104894,
+    "macro_auroc_context_as_available": 0.7292484945526558,
+    "answer_all": {
+      "natural": {
+        "fn": 0.1000444334732165,
+        "severe": 0.27993088126388543
+      },
+      "image_only": {
+        "fn": 0.0977157903398338,
+        "severe": 0.27672179708713895
+      }
+    },
+    "targets_natural": {
+      "configs": 8,
+      "met_mimic_calibrated": 2,
+      "met_cxp_recalibrated": 8,
+      "upper_bound_met_cxp": 8
+    },
+    "targets_image_only": {
+      "configs": 8,
+      "met_mimic_calibrated": 5,
+      "met_cxp_recalibrated": 8,
+      "upper_bound_met_cxp": 8
+    },
+    "primary_endpoint_contrasts": [
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "comparison": "UDMS vs U",
+        "delta_referral": -0.002838805233275734,
+        "lo": -0.006047889410022217,
+        "hi": 0.00041142104830083157,
+        "p": 0.08478304339132174,
+        "mde80": 0.004515116666782261,
+        "p_holm": 0.33913217356528697,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "comparison": "U vs entropy",
+        "delta_referral": 0.005842178885871801,
+        "lo": -0.001398831564222826,
+        "hi": 0.013371184069777007,
+        "p": 0.10997800439912017,
+        "mde80": 0.01040042065832543,
+        "p_holm": 0.4399120175964807,
+        "verdict_holm": "inconclusive"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "comparison": "U vs ambiguity",
+        "delta_referral": -0.19369702954003126,
+        "lo": -0.2096190241092734,
+        "hi": -0.17691105076935737,
+        "p": 0.0003999200159968006,
+        "mde80": 0.02368511314857394,
+        "p_holm": 0.003199360127974405,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "comparison": "U vs L2D_U",
+        "delta_referral": -0.14922241421871144,
+        "lo": -0.16296490578457995,
+        "hi": -0.13548095120546366,
+        "p": 0.0003999200159968006,
+        "mde80": 0.019654937491929668,
+        "p_holm": 0.003199360127974405,
+        "verdict_holm": "better"
+      },
+      {
+        "harm": "fn",
+        "alpha": 0.03,
+        "comparison": "UDMS vs L2D_UDMS",
+        "delta_referral": -0.13626265119723524,
+        "lo": -0.14905990290463259,
+        "hi": -0.12354871225211882,
+        "p": 0.0003999200159968006,
+        "mde80": 0.018096074791289832,
+        "p_holm": 0.003199360127974405,
+        "verdict_holm": "better"
+      }
+    ],
+    "ask": [
+      {
+        "action": "ask_context",
+        "budget": 0.3,
+        "a_c": 0.1,
+        "a_l": 0.25,
+        "delta_cost": -0.0007663015181577685,
+        "lo": -0.0011350302738349618,
+        "hi": -0.0003954802221216288,
+        "p": 0.0003999200159968006,
+        "verdict": "better",
+        "ask_context_rate": 0.03541666666666667,
+        "ask_lateral_rate": 0.0
+      },
+      {
+        "action": "ask_lateral",
+        "budget": 0.3,
+        "a_c": 0.1,
+        "a_l": 0.25,
+        "delta_cost": 4.383178164428165e-05,
+        "lo": 1.7662151251526255e-05,
+        "hi": 7.271765654253154e-05,
+        "p": 0.0003999200159968006,
+        "verdict": "worse",
+        "ask_context_rate": 0.0,
+        "ask_lateral_rate": 0.0005
+      },
+      {
+        "action": "ask_both",
+        "budget": 0.3,
+        "a_c": 0.1,
+        "a_l": 0.25,
+        "delta_cost": -0.000726398982545233,
+        "lo": -0.0010970186432456438,
+        "hi": -0.00035558084266196807,
+        "p": 0.0003999200159968006,
+        "verdict": "better",
+        "ask_context_rate": 0.03541666666666667,
+        "ask_lateral_rate": 0.0004722222222222222
+      }
+    ],
+    "subgroups": {
+      "groups": [
+        "age 40-64",
+        "age<40",
+        "age>=65",
+        "race=Asian",
+        "race=Black",
+        "race=Hispanic",
+        "race=Other/unknown",
+        "race=White",
+        "sex=F",
+        "sex=M"
+      ],
+      "configs": 80,
+      "point_target_met": 78,
+      "upper_bound_met": 45,
+      "exceedances": [
+        {
+          "group": "age<40",
+          "harm": "severe",
+          "alpha": 0.05,
+          "risk": 0.05785970302099334
+        },
+        {
+          "group": "race=Other/unknown",
+          "harm": "severe",
+          "alpha": 0.1,
+          "risk": 0.10617469879518072
+        }
+      ]
+    },
+    "report_labels_note": "report_fixed.json labels excluded: chance-level agreement with impression labels (kappa<=0.05), judged misaligned"
+  }
+}
