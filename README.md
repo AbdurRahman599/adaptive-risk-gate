@@ -47,6 +47,7 @@ Supplementary: [S1 decision curves](figures/final/FigS1_decision_curve.png), [S2
 | `figures/src/make_figures.py` | Regenerates Figs. 4-8 and S1-S4 from `results/` |
 | `figures/src/drawio/` | Editable draw.io sources of Figs. 1-3 and their generator/export scripts |
 | `figures/final/` | All figures (PDF, PNG) |
+| [`references.md`](references.md) | Sources cited in the manuscript, numbered in citation order |
 
 `V19` and `V20` in file names are the internal run versions that produced the reported results.
 
