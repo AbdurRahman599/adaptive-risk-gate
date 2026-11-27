@@ -220,53 +220,64 @@ def fig2():
     d.save()
 
 
-# ------------------------------------------------------------------ Figure 3: score axis, calibrated threshold, ask loop
+# ------------------------------------------------------------------ Figure 3: referral threshold and workload budget
 def fig3():
-    d = Diagram('Fig3_routing', 1500, 820)
-    d.shape(0, 0, 1, 1, 'rounded=0;fillColor=none;strokeColor=none;')
-    ic_xray(d, 110, 110, 1.0); ic_doc(d, 175, 110, 0.85)
-    d.line([(215, 110), (300, 110)], color=NAVY, width=2.5)
-    ic_network(d, 365, 110, 0.95, NAVY, '#9AA8B4', lock=False)
-    d.line([(430, 110), (500, 110)], color=NAVY, width=2.5)
-    for k, a in enumerate('UDMSE'):
-        chip(d, 510+k*58, 86, 50, 48, BLUE if a == 'U' else LBLUE, a, filled=True, size=19)
-    d.line([(800, 110), (880, 110)], color=NAVY, width=2.5)
-    d.shape(885, 72, 76, 76, f'ellipse;fillColor={LTEAL};strokeColor={NAVY};strokeWidth=2.5;fontColor={NAVY};fontSize=30;fontStyle=3;{FONT}', 's')
-    d.line([(961, 110), (1060, 110)], color=BLUE, width=2.5)
-    d.shape(1060, 60, 120, 100, f'rhombus;fillColor={PALE};strokeColor={BLUE};strokeWidth=2;fontColor={BLUE};fontSize=34;fontStyle=1;{FONT}', '?')
-    d.line([(1180, 110), (1255, 110)], color=BLUE, width=2.5)
-    chip(d, 1260, 86, 96, 48, BLUE, 'ASK', size=20)
-    ic_doc(d, 1395, 90, 0.6, BLUE); ic_xray(d, 1440, 90, 0.55, lateral=True)
-    d.line([(1308, 86), (1308, 30), (923, 30), (923, 72)], color=BLUE, width=2.5)
-    d.text(1190, 80, 60, 26, 'yes', 15, BLUE, True)
-    d.text(1128, 170, 50, 26, 'no', 15, NAVY, True)
-    d.line([(1120, 160), (1120, 300), (923, 300), (923, 352)], color=NAVY, width=2.5)
-    ax0, ax1, t, ya = 180, 1320, 760, 380
-    d.shape(ax0, ya, t-ax0, 46, f'rounded=0;fillColor={LTEAL};strokeColor=none;')
-    d.shape(t, ya, ax1-t, 46, f'rounded=0;fillColor={LOCHRE};strokeColor=none;')
-    d.shape(ax0, ya, ax1-ax0, 46, f'rounded=0;fillColor=none;strokeColor={NAVY};strokeWidth=1.5;')
-    d.shape(t-3, ya-22, 6, 90, f'rounded=0;fillColor={NAVY};strokeColor=none;')
-    d.text(t-30, ya-52, 60, 30, 't', 26, NAVY, True, italic=True)
-    d.shape(905, ya-14, 36, 26, f'triangle;direction=south;fillColor={NAVY};strokeColor=none;')
-    d.text(ax0-150, ya+8, 140, 30, 'lower risk', 15, GREY, align='right')
-    d.text(ax1+10, ya+8, 160, 30, 'higher risk', 15, GREY, align='left')
-    ic_check(d, 330, 520, 1.3); d.text(400, 495, 220, 44, 'ANSWER', 28, TEAL, True, align='left')
-    ic_reviewer(d, 1080, 520, 1.3); d.text(1140, 495, 240, 44, 'ESCALATE', 28, OCHRE, True, align='left')
-    d.line([(330, 426), (330, 478)], color=TEAL, width=2.5); d.line([(1080, 426), (1080, 478)], color=OCHRE, width=2.5)
-    px, py, pw, ph = 560, 610, 400, 175
-    d.line([(px, py+ph), (px+pw, py+ph)], color=GREY, width=1.5)
-    d.line([(px, py+ph), (px, py)], color=GREY, width=1.5)
-    curve = [(px+10, py+ph-8), (px+120, py+ph-22), (px+200, py+ph-50), (px+270, py+ph-95), (px+330, py+ph-135), (px+385, py+ph-160)]
-    d.line(curve, color=NAVY, width=3, arrow=False, curved=True)
-    ya_alpha = py+ph-86
-    d.line([(px, ya_alpha), (px+pw-10, ya_alpha)], color=BRICK, width=2, arrow=False, dashed=True)
-    d.text(px+pw-4, ya_alpha-16, 40, 30, '&#945;', 22, BRICK, True, italic=True, align='left')
-    tx = px+262
-    d.line([(tx, py+ph), (tx, ya_alpha)], color=NAVY, width=2, arrow=False, dashed=True)
-    d.line([(tx, ya_alpha), (t, ya+52)], color=NAVY, width=2, arrow=True, dashed=True)
-    d.text(tx-14, py+ph+4, 30, 28, 't', 20, NAVY, True, italic=True)
-    d.text(px-200, py+40, 190, 50, 'risk among<br>answered', 15, GREY, align='right')
-    d.text(px+pw-160, py+ph+4, 160, 28, 'threshold', 15, GREY, align='right')
+    d = Diagram('Fig3_routing', 1070, 510)
+
+    def rule(x1, y1, x2, y2, color=GREY, width=2, arrow=True):
+        d.line([(x1, y1), (x2, y2)], color=color, width=width, arrow=arrow)
+
+    def panel(letter, name, y):
+        d.text(2, y, 34, 32, letter, 26, NAVY, True)
+        d.text(40, y, 960, 32, name, 23, NAVY, True, 'left')
+
+    panel('A', 'Referral at a specified missed-finding target', 0)
+    ic_xray(d, 53, 103, 0.77)
+    ic_doc(d, 109, 103, 0.68)
+    d.text(1, 149, 165, 48, 'Frontal image and<br>available history', 17)
+    rule(160, 103, 208, 103, NAVY, 2.5)
+    for k, p in enumerate([0.87, 0.22, 0.51, 0.3, 0.78, 0.42, 0.17]):
+        d.shape(228, 68 + k * 10, 84, 6, 'fillColor=' + LGREY + ';strokeColor=none;')
+        d.shape(228, 68 + k * 10, 84 * p, 6, 'fillColor=' + NAVY + ';strokeColor=none;')
+    d.text(199, 149, 145, 48, '14 calibrated<br>probabilities', 17)
+    rule(325, 103, 366, 103, NAVY, 2.5)
+    d.shape(378, 72, 62, 62, 'ellipse;fillColor=' + LTEAL + ';strokeColor=' + NAVY + ';strokeWidth=2.4;')
+    d.text(378, 73, 62, 60, '<i>s</i>', 27, NAVY, True)
+    d.text(344, 149, 131, 48, 'Patient-level<br>risk score', 17)
+    rule(450, 103, 503, 103, NAVY, 2.5)
+    d.shape(518, 88, 238, 30, 'fillColor=' + LTEAL + ';strokeColor=none;')
+    d.shape(756, 88, 257, 30, 'fillColor=' + LOCHRE + ';strokeColor=none;')
+    d.shape(518, 88, 495, 30, 'fillColor=none;strokeColor=' + NAVY + ';strokeWidth=1.4;')
+    rule(756, 76, 756, 130, NAVY, 3, False)
+    d.text(643, 39, 226, 33, 'Calibrated threshold <i>t</i>', 18, NAVY, True)
+    ic_check(d, 550, 161, 0.52)
+    d.text(578, 140, 150, 41, 'ANSWER', 20, TEAL, True, 'left')
+    d.text(578, 176, 140, 27, '<i>s</i> &lt; <i>t</i>', 18, NAVY, False, 'left')
+    ic_reviewer(d, 807, 161, 0.55)
+    d.text(842, 140, 172, 41, 'ESCALATE', 20, OCHRE, True, 'left')
+    d.text(842, 176, 140, 27, '<i>s</i> &#8805; <i>t</i>', 18, NAVY, False, 'left')
+    rule(8, 220, 1039, 220, LGREY, 1.4, False)
+
+    panel('B', 'Action selection under a workload budget', 238)
+    d.text(14, 279, 535, 29, 'Expected workload per eligible action', 18, GREY, False, 'left')
+    actions = [
+        (73, 'Answer', '0', TEAL),
+        (211, 'Review', '1.00', OCHRE),
+        (350, 'Ask for history', '0.15', OCHRE),
+        (494, 'Ask for lateral', '0.40', BLUE),
+    ]
+    ic_check(d, actions[0][0], 357, 0.76)
+    ic_reviewer(d, actions[1][0], 356, 0.78)
+    ic_doc(d, actions[2][0], 357, 0.74)
+    ic_xray(d, actions[3][0], 357, 0.74, lateral=True)
+    for x, label, units, color in actions:
+        d.text(x - 74, 399, 148, 32, label, 17, color, True)
+        d.text(x - 65, 432, 130, 30, units, 20, NAVY, True)
+    rule(580, 365, 624, 365, NAVY, 2.5)
+    d.shape(634, 292, 402, 155, 'rounded=1;arcSize=10;fillColor=' + PALE + ';strokeColor=none;')
+    d.text(648, 306, 375, 34, 'Select the lowest-cost action', 19, NAVY, True)
+    d.text(650, 350, 370, 32, 'Expected loss + &#955; &#215; workload', 19, NAVY)
+    d.text(652, 393, 365, 30, 'Mean budget: 0.30 reviews per patient', 17, GREY)
     d.save()
 
 

@@ -1,27 +1,29 @@
-# Adaptive Risk Gate
+# Can chest X-ray AI that defers or asks for more information provide a statistical guarantee on missed findings?
 
-Code, aggregate results and figures for **"A statistical guarantee on missed findings for chest X-ray AI that can defer or ask for more information"** (Abdur Rahman, 2026; manuscript in preparation for the *Journal of Biomedical Informatics*).
+Code, aggregate results and figures for Abdur Rahman’s manuscript prepared for SPIE’s *Journal of Medical Imaging*.
 
-An oversight layer routes each chest-radiograph case to **Answer**, **Escalate** or **Ask**. The escalation threshold is calibrated with Learn-then-Test so that the severity-weighted missed-finding burden among automatically answered cases stays below a chosen target, with simultaneous bounds for four critical findings (edema, consolidation, pneumonia, pneumothorax). The study then asks whether extra routing signals or requests for more information (clinical history, a lateral view) improve on calibrated uncertainty alone.
+The study asks how often a chest X-ray classifier must refer patients for review to keep missed findings below a chosen target. At a calibrated risk-score threshold, the system either releases its predictions or refers the patient. A separate workload analysis allows it to request clinical history or a lateral image when eligible.
 
-<p align="center"><img src="figures/final/Fig3_routing.png" width="720" alt="Answer, escalate or ask routing with a Learn-then-Test calibrated threshold"></p>
+Risk is the mean unreviewed loss across **all patients entering triage**. A referred examination contributes zero unreviewed loss to this endpoint. The 201 candidate cutoffs came from the same calibration patients used to test them. The study measures how often the selected thresholds met their targets on evaluation patients. A formal finite-sample guarantee for this data-dependent procedure remains unproven.
+
+<p align="center"><img src="figures/final/Fig3_routing.png" width="850" alt="Panel A shows the risk threshold for automatic answers and referrals. Panel B shows the expected workload of answering, reviewing and requesting information."></p>
+
+**Figure 3.** A full review costs one workload unit. Under the primary assumptions, a request for history costs 0.15 units on average and a request for a lateral image costs 0.40, including review after a failed request. The policy selects actions under a mean budget of 0.30 review units per patient. [Vector PDF](figures/final/Fig3_routing.pdf) · [Editable diagram](figures/src/drawio/Fig3_routing.drawio)
 
 ## Key results
 
-| Question | Result |
+| Question | Observed result |
 |---|---|
-| Does the risk bound hold out of sample? | Met in **72/72** cross-fitted configurations (MIMIC-CXR-JPG, 5,994 patients) and **8/8** targets on 2,000 untouched MIMIC patients |
-| Does it transfer to other hospitals? | NIH ChestX-ray14 (6,000 patients, image only): **6/6** with the MIMIC threshold unchanged. CheXpert Plus (6,000 patients): only **2/8** with the MIMIC threshold, **8/8** after recalibrating the threshold on 1,949 local patients |
-| How many escalations are needed? | At burden target 0.03: **29.6%** (calibrated uncertainty) vs 30.7% entropy, 54.0% conformal ambiguity, 58-60% surrogate learning-to-defer |
-| Do extra signals help? | Cross-modal disagreement, missing context, severity and ensemble spread: no reliable gain (primary endpoint −2.8 escalations per 1,000; 95% CI −7.5 to +1.8; Holm p = 1.0) |
-| Is asking for information worth it? | History raises macro-AUROC 0.776 → 0.835, but asking for it changes routing cost negligibly; at the primary workload budget it helped only for cheap requests (about 10% of a full review or less), and more broadly only when escalation capacity was tight |
-| Is it fair across subgroups? | Point target met in 77/80 MIMIC and 78/80 CheXpert Plus subgroup configurations; the guarantee is marginal, not subgroup-conditional |
-
-Main message: finite-sample risk control gives efficient, auditable oversight, but under dataset shift the threshold should be **recalibrated on local patients** before deployment. All results are retrospective and simulated (assumed request costs, no clinicians in the loop).
+| How often were the MIMIC targets met? | **72/72** score–target combinations in each of three partitions of the same 5,994 patients. The four-signal policy met **8/8** targets in 2,000 additional MIMIC patients. |
+| How did thresholds transfer? | On NIH ChestX-ray14 (6,000 patients), the four-signal policy met **6/6** exploratory targets with either calibration source. The targets were set using the NIH evaluation cohort’s answer-all risk, and the MIMIC thresholds were fitted for those targets. On CheXpert Plus with history as recorded, MIMIC thresholds met **2/8** targets. After local calibration on 1,949 patients, the policy met **8/8** targets on the same 4,051 evaluation patients. |
+| How many patients were referred? | At a MIMIC burden target of 0.03, uncertainty alone referred **29.9%** and the four-signal policy referred **29.6%**. Entropy referred 30.7%, conformal ambiguity 54.0%, and the learning-to-defer surrogates 58.2% (uncertainty) and 59.9% (four signals). |
+| Did additional signals change referrals? | Adding disagreement, missing-context information and severity to uncertainty changed referrals by **−2.8 per 1,000 patients** (95% CI −7.5 to 1.8, Holm-adjusted p = 1.00). The interval includes both a small reduction and a small increase. |
+| What was the value of history? | Among MIMIC patients with history available, adding history increased macro-AUROC from **0.776 to 0.835**. At the primary workload budget, allowing selective history requests changed modeled diagnostic cost by **−0.00009 per patient** (95% CI −0.00025 to 0.00008). |
+| How often were subgroup targets met? | Using the pooled four-signal threshold, subgroup point estimates met the target in 77/80 MIMIC and 78/80 CheXpert Plus subgroup configurations. |
 
 ## Figures
 
-Figures 1-3 are editable **draw.io** schematics; Figures 4-8 and S1-S4 are plotted from the result tables in `results/`.
+Figures 1–3 are editable draw.io diagrams. Figures 4–8 and S1–S4 use the aggregate result tables.
 
 | | |
 |---|---|
@@ -30,64 +32,54 @@ Figures 1-3 are editable **draw.io** schematics; Figures 4-8 and S1-S4 are plott
 | <img src="figures/final/Fig6_efficiency.png" width="420"><br>**Fig. 6** Risk-coverage curves | <img src="figures/final/Fig7_signals_and_ask.png" width="420"><br>**Fig. 7** Extra signals and asking |
 | <img src="figures/final/Fig8_subgroups.png" width="420"><br>**Fig. 8** Subgroup audit (MIMIC) | <img src="figures/final/FigS2_transfer.png" width="420"><br>**Fig. S2** Transfer of AUROC to NIH and CheXpert Plus |
 
-Supplementary: [S1 decision curves](figures/final/FigS1_decision_curve.png), [S2 transfer of AUROC](figures/final/FigS2_transfer.png), [S3 full vs uncertainty-only gate, external](figures/final/FigS3_external_contrasts.png), [S4 CheXpert Plus subgroups](figures/final/FigS4_subgroups_chexpert_plus.png). Every figure is in `figures/final/` as vector PDF and 450-dpi PNG.
-
-**Editing the schematics.** Open `figures/src/drawio/*.drawio` at [app.diagrams.net](https://app.diagrams.net) or in draw.io desktop, edit, then *File > Export as* PNG or PDF. `make_drawio.py` regenerates the `.drawio` files and `export_drawio.py` exports them (needs draw.io desktop and `pymupdf`).
+The supplementary figures show [decision curves](figures/final/FigS1_decision_curve.png), [external AUROC](figures/final/FigS2_transfer.png), [external referral contrasts](figures/final/FigS3_external_contrasts.png) and [CheXpert Plus subgroup results](figures/final/FigS4_subgroups_chexpert_plus.png). Each figure is available as a PDF and a PNG.
 
 ## Repository contents
 
-| Path | What |
+| Path | Contents |
 |---|---|
-| `notebooks/01_main_analysis.ipynb` | Full pipeline on MIMIC-CXR-JPG: embeddings, cross-fitted classifiers and gates, Learn-then-Test calibration, baselines, ask actions, per-finding bounds, NegBio second labeler, untouched cohort, NIH ChestX-ray14 |
-| `notebooks/02_mimic_subgroup_audit.ipynb` | MIMIC subgroup audit (sex, age, race); reuses checkpoints from notebook 01 |
-| `notebooks/03_external_chexpert_plus.ipynb` | CheXpert Plus external cohort: frozen MIMIC models with clinical history and lateral views, threshold kept vs recalibrated, baselines, ask actions, sex/age/race subgroups; reuses checkpoints from notebook 01 |
-| `results/main/` | Aggregate tables (CSV), `results_v19.json`, `Results_Summary_V19.md` scorecard |
-| `results/mimic_subgroups/` | MIMIC subgroup AUROC and risk tables |
-| `results/external_chexpert_plus/` | CheXpert Plus tables and `results_v20_chexpert_plus.json` |
-| `figures/src/make_figures.py` | Regenerates Figs. 4-8 and S1-S4 from `results/` |
-| `figures/src/drawio/` | Editable draw.io sources of Figs. 1-3 and their generator/export scripts |
-| `figures/final/` | All figures (PDF, PNG) |
-| [`references.md`](references.md) | Sources cited in the manuscript, numbered in citation order |
-| [`check_readme.py`](check_readme.py) | Verifies every number in this README's Key-results and Methods sections against `results/` and `notebooks/` (`python check_readme.py`) |
+| `notebooks/01_main_analysis.ipynb` | MIMIC classification, threshold calibration, referral and request policies, additional MIMIC patients and the NIH cohort |
+| `notebooks/02_mimic_subgroup_audit.ipynb` | MIMIC subgroup evaluation using checkpoints from the main analysis |
+| `notebooks/03_external_chexpert_plus.ipynb` | CheXpert Plus external evaluation, local recalibration and subgroup comparisons |
+| `results/main/` | Aggregate tables, run JSON and the annotated V19 summary |
+| `results/mimic_subgroups/` and `results/external_chexpert_plus/` | Aggregate subgroup and external cohort results |
+| `figures/src/` and `figures/final/` | Plotting scripts, editable schematics and exported figures |
+| [References](references.md) | Bibliography in manuscript citation order |
+| [README checks](check_readme.py) | Checks on reported numerical results and design settings against the saved tables and notebooks |
 
-`V19` and `V20` in file names are the internal run versions that produced the reported results.
+## Reproducing the results
+
+Run the following from the repository root to verify the reported numbers using Python’s standard library.
+
+```sh
+python check_readme.py
+```
+
+To regenerate the data plots from the included tables, install NumPy, pandas and Matplotlib, then run `python figures/src/make_figures.py`. To regenerate the editable schematics, run `python figures/src/drawio/make_drawio.py`. Open a diagram in draw.io to edit or export it. The supplied batch exporter uses draw.io Desktop on Windows and PyMuPDF.
+
+The original run outputs and notebook code use “guarantee” in some filenames and scorecard labels. These identify the calibration analysis and report observed target attainment.
+
+The patient-level notebooks use project-specific inputs, including `persistent_encoded_data_PRIVATE.pkl`, `frozen_manifest.json` and `config.json`. The main notebook lists the required files in its setup cells. Repeating that analysis requires authorized dataset access and the corresponding caches and checkpoints. The notebooks use Google Colab paths and the dependencies in `requirements.txt` are unpinned.
 
 ## Data access
 
-No patient-level data, embeddings, images or report text are included; everything in `results/` is aggregate.
-
-- **MIMIC-CXR-JPG 2.1.0, MIMIC-CXR 2.1.0, MIMIC-IV 3.1:** credentialed access through [PhysioNet](https://physionet.org) (credentialing and data use agreement required).
-- **NIH ChestX-ray14:** public.
-- **CheXpert Plus:** Stanford AIMI via [Redivis](https://stanford.redivis.com/datasets/5yyj-1a9f6ap0x) under the Stanford research data use agreement. Its whole-report label file (`report_fixed.json`, v1.0) agreed with the impression labels only at chance level and was not used; see the manuscript Methods.
-- **Encoders:** BiomedCLIP ViT-B/16 and BiomedBERT from Hugging Face at pinned revisions (listed in the manuscript and notebooks).
-
-## Reproducing
-
-1. Run `notebooks/01_main_analysis.ipynb`, then `02` and `03` (Google Colab; change `/content/drive/MyDrive/...` paths to your storage; notebook 03 asks for Redivis sign-in and a confirmation that you accept the CheXpert Plus terms).
-2. Copy the aggregate outputs into `results/`.
-3. Regenerate figures:
-
-```
-pip install -r requirements.txt
-python figures/src/make_figures.py          # Figs. 4-8, S1-S4
-python figures/src/drawio/export_drawio.py  # Figs. 1-3 (needs draw.io desktop)
-```
-
-All analysis after embedding runs on CPU. `requirements.txt` is not version-pinned; pin from your environment for exact reproduction.
+MIMIC-CXR-JPG 2.1.0, MIMIC-CXR 2.1.0 and MIMIC-IV 3.1 require credentialed PhysioNet access. NIH ChestX-ray14 provides the image-only external cohort. CheXpert Plus is available through Stanford under its research data use agreement. The repository distributes aggregate results. [PhysioNet](https://physionet.org/) · [Stanford CheXpert Plus](https://stanford.redivis.com/datasets/5yyj-1a9f6ap0x)
 
 ## Methods at a glance
 
-- **Classifiers:** frozen BiomedCLIP (512-d image) and BiomedBERT (768-d context, 192 tokens, mean pooling) embeddings; strongly regularised logistic regression per label with temperature scaling.
-- **Outcomes:** severity-weighted missed-finding burden (targets 0.01-0.04) and critical-miss rate (0.05-0.20) among automatically answered cases. Severity weights are author-assigned, informed by the literature, and not rated by clinicians (`SEVERITY` in the notebooks).
-- **Calibration:** Learn-then-Test with Hoeffding-Bentkus p-values, fixed-sequence testing, δ = 0.10; per-finding bounds with a Bonferroni split.
-- **Evaluation:** six patient groups with rotating roles so every patient is evaluated once; three independent fold assignments; paired patient-level bootstrap (5,000 replicates) with Holm correction.
+- Frozen BiomedCLIP and BiomedBERT encoders supplied image and history embeddings. Regularized logistic regression heads and temperature scaling produced finding probabilities.
+- The two population endpoints were severity-weighted missed-finding burden (targets 0.01–0.04) and critical-miss rate (0.05–0.20). The author assigned the severity weights (`SEVERITY` in the notebooks).
+- Threshold selection used fixed-sequence Learn then Test with Hoeffding–Bentkus p-values and δ = 0.10. The finding-specific analysis split the error allowance across edema, consolidation, pneumonia and pneumothorax.
+- In MIMIC, six patient groups rotated through fitting, tuning, calibration and evaluation. Three partitions reused the same patients. The main referral and cost comparisons used a paired patient bootstrap with 5,000 replicates and Holm adjustment where indicated.
 
 ## Limitations
 
-Retrospective, models developed on one source, report-derived labels from automatic labelers (CheXpert labeler for MIMIC, CheXbert for CheXpert Plus); no clinicians involved; request costs, failure rates and reviewer behaviour are assumptions with sensitivity grids; subgroup guarantees are not provided.
+All evaluations were retrospective and used report-derived labels. Request costs, failure probabilities and the effect of review on residual diagnostic loss were modeled. The subgroup estimates are descriptive. Local recalibration improved target attainment on the held-out CheXpert Plus cohort. Prospective clinical performance and the effect on patient outcomes remain open questions.
 
 ## Citation
 
-Please cite the manuscript (reference to be added on publication). MIT licence; see `LICENSE`.
+Abdur Rahman. *Can chest X-ray AI that defers or asks for more information provide a statistical guarantee on missed findings?* Manuscript prepared for the *Journal of Medical Imaging*.
 
-Author: Abdur Rahman, Independent Researcher. ORCID: [0009-0005-5495-5405](https://orcid.org/0009-0005-5495-5405)
+Department of Computer Science and Engineering, International Islamic University Chittagong, Kumira 4318, Chattogram, Bangladesh. [ORCID 0009-0005-5495-5405](https://orcid.org/0009-0005-5495-5405)
+
+Software is distributed under the [MIT License](LICENSE).
