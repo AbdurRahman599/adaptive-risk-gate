@@ -164,7 +164,7 @@ def fig1():
     ic_lock(d, 882, 300, 1.0)
     for y in [125, 320, 515]:
         d.line([(930, 320), (930, y), (990, y)], color=TEAL, width=3)
-    vals = [(125, 'Untouched MIMIC', '2,000 patients', (True, True, True), False),
+    vals = [(125, 'Additional MIMIC', '2,000 patients', (True, True, True), False),
             (320, 'NIH ChestX-ray14', '6,000 patients', (True, False, False), True),
             (515, 'CheXpert Plus', '6,000 patients', (True, True, True), True)]
     for y, name, n, has, ext in vals:
@@ -173,7 +173,7 @@ def fig1():
         d.text(1010, y-34, 300, 28, n, 18, NAVY, align='left')
         glyphs(d, 1030, y+38, has)
         if ext:
-            chip(d, 1330, y-56, 120, 34, OCHRE, 'kept t', filled=False, size=14)
+            chip(d, 1330, y-56, 120, 34, OCHRE, 'source t', filled=False, size=14)
             chip(d, 1330, y-10, 120, 34, TEAL, 'local t', filled=True, size=14)
     d.save()
 
@@ -262,7 +262,7 @@ def fig3():
     d.text(14, 279, 535, 29, 'Expected workload per eligible action', 18, GREY, False, 'left')
     actions = [
         (73, 'Answer', '0', TEAL),
-        (211, 'Review', '1.00', OCHRE),
+        (211, 'Escalate', '1.00', OCHRE),
         (350, 'Ask for history', '0.15', OCHRE),
         (494, 'Ask for lateral', '0.40', BLUE),
     ]

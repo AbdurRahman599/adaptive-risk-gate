@@ -1,0 +1,8 @@
+analysis,metric,condition,value
+history_mismatch,detection_auroc,D signal (mean JS divergence),0.6276565896366264
+history_mismatch,detection_auroc,U-only gate score,0.509831651994891
+history_mismatch,detection_auroc,Full gate score,0.5182375835256685
+history_mismatch,severity_weighted_missed_finding_burden,matched_fn,0.04945976455410418
+history_mismatch,severity_weighted_missed_finding_burden,mismatched_fn,0.056531204644412206
+ensemble_spread,critical_miss_ranking_auroc,uncertainty_only,0.7882764231992916
+ensemble_spread,critical_miss_ranking_auroc,uncertainty_and_ensemble_spread,0.7849223820041058

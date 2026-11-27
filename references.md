@@ -38,7 +38,7 @@ Sources in manuscript citation order. [Study overview](README.md)
 
 18. K. Dvijotham, J. Winkens, M. Barsbey, S. Ghaisas, R. Stanforth, N. Pawlowski et al., “Enhancing the reliability and accuracy of AI-enabled diagnosis via complementarity-driven deferral to clinicians,” *Nat Med* **29**(7), 1814–20 (2023). [DOI 10.1038/s41591-023-02437-x](https://doi.org/10.1038/s41591-023-02437-x)
 
-19. X. Wang, Y. Peng, L. Lu, Z. Lu, M. Bagheri and R. M. Summers, “ChestX-ray8: hospital-scale chest X-ray database and benchmarks on weakly-supervised classification and localization of common thorax diseases,” *Proc IEEE CVPR*, 2097–106 (2017). [DOI 10.1109/CVPR.2017.369](https://doi.org/10.1109/CVPR.2017.369)
+19. X. Wang, Y. Peng, L. Lu, Z. Lu, M. Bagheri and R. M. Summers, “ChestX-ray8: hospital-scale chest X-ray database and benchmarks on weakly-supervised classification and localization of common thorax diseases,” *Proc IEEE CVPR*, 3462–3471 (2017). [DOI 10.1109/CVPR.2017.369](https://doi.org/10.1109/CVPR.2017.369)
 
 20. P. Chambon, J.-B. Delbrouck, T. Sounack, S.-C. Huang, Z. Chen, M. Varma, S. Q. H. Truong, C. T. Chuong and C. P. Langlotz, “CheXpert Plus: augmenting a large chest X-ray dataset with text radiology reports, patient demographics and additional image formats,” arXiv:2405.19538 (2024). [DOI 10.48550/arXiv.2405.19538](https://doi.org/10.48550/arXiv.2405.19538) [dataset DOI 10.71718/6nvz-pm34](https://doi.org/10.71718/6nvz-pm34)
 

@@ -1,4 +1,4 @@
-# Versions are not pinned: the notebooks were run on Google Colab. Pin to your environment (pip freeze) before release.
+# Dependencies used in the Colab analysis (versions are unpinned).
 numpy
 pandas
 scipy

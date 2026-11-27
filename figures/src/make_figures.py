@@ -4,11 +4,11 @@ Figures 1-3 are draw.io schematics (drawio/make_drawio.py, drawio/export_drawio.
 Figures carry panel letters, axes and legends only; titles and explanations are in the manuscript captions.
 
 Chart type follows the question:
-  Fig. 4  dumbbells (level and gain per label), interval plots      Fig. 5  realised risk against target, identity line (log-log)
+  Fig. 4  dumbbells (level and gain per label), interval plots      Fig. 5  realized risk against target, identity line (log-log)
   Fig. 6  risk-coverage curves + slopegraph between cohorts          Fig. 7  forest plots + break-even heatmap
-  Fig. 8  subgroup forest plots      S1 decision curves      S2 transfer scatter with identity line      S3 forest plots
-Colour has one meaning throughout: image blue, history ochre, lateral teal; full signal set navy, uncertainty only blue,
-entropy teal, conformal ambiguity ochre, surrogate learning-to-defer brick, oracle grey; MIMIC threshold kept = open ochre,
+  Fig. 8  subgroup forest plots      S1 transfer scatter with identity line      S2 forest plots      S3 decision curves
+Colour has one meaning throughout: image blue, history ochre, lateral teal; four-signal navy, uncertainty only blue,
+entropy teal, conformal ambiguity ochre, surrogate learning-to-defer brick, oracle grey; source-calibrated threshold = open ochre,
 recalibrated locally = filled teal; better teal, worse brick, inconclusive grey."""
 import re, json
 from pathlib import Path
@@ -28,7 +28,7 @@ cxp = json.load(open(RX/'results_v20_chexpert_plus.json'))['external_chexpert_pl
 
 NAVY, BLUE, TEAL, OCHRE, BRICK, GREY = '#17344D', '#3A7FB5', '#00918A', '#C08232', '#B5534A', '#8A97A3'
 INK, INK2, MUTED, GRID, AXIS, SURF = '#17344D', '#4A5B6A', '#7D8B97', '#E6EAEE', '#B9C3CC', '#FFFFFF'
-GATE = {'UDMS': (NAVY, 'full signal set', 'D'), 'U': (BLUE, 'uncertainty only', 'o'), 'entropy': (TEAL, 'entropy', 's'),
+GATE = {'UDMS': (NAVY, 'four-signal', 'D'), 'U': (BLUE, 'uncertainty only', 'o'), 'entropy': (TEAL, 'entropy', 's'),
         'ambiguity': (OCHRE, 'conformal ambiguity', '^'), 'L2D_U': (BRICK, 'surrogate learning-to-defer', 'v'), 'oracle': (GREY, 'oracle', None)}
 VERDICT = {'better': TEAL, 'worse': BRICK}
 plt.rcParams.update({
@@ -83,11 +83,11 @@ def fig4():
     save(fig, 'Fig4_information_value')
 
 
-# ============================================================== Fig. 5: realised risk against target
+# ============================================================== Fig. 5: realized risk against target
 def riskplot(ax, lo, hi):
     ax.set_xscale('log'); ax.set_yscale('log'); ax.set_xlim(lo, hi); ax.set_ylim(lo, hi)
     xs = np.array([lo, hi]); ax.fill_between(xs, xs, hi, color=BRICK, alpha=0.07, lw=0, zorder=0); ax.plot(xs, xs, color=BRICK, lw=1.0, zorder=1)
-    ax.set_xlabel('target'); ax.set_ylabel('realised risk'); ax.set_aspect('equal')
+    ax.set_xlabel('target'); ax.set_ylabel('realized risk'); ax.set_aspect('equal')
     fmt = FuncFormatter(lambda v, _: f'{v:g}'); ax.xaxis.set_major_formatter(fmt); ax.yaxis.set_major_formatter(fmt)
     ax.xaxis.set_minor_formatter(FuncFormatter(lambda v, _: '')); ax.yaxis.set_minor_formatter(FuncFormatter(lambda v, _: ''))
 HARM_MK = {'fn': 'o', 'severe': '^'}
@@ -124,11 +124,11 @@ def fig5():
         q = sh[sh.target_fraction == frac].iloc[0]
         for l, m in fmk.items():
             ax.scatter([q[f'target_{l}']], [q[f'risk_{l}']], marker=m, s=24, color=NAVY if filled else SURF, edgecolor=NAVY, lw=1.0, zorder=4)
-    ax.legend(handles=legend_handles([(NAVY, m, True, l, '', 0) for l, m in fmk.items()] + [(NAVY, 'o', False, '75% of answer-all', '', 0), (NAVY, 'o', True, '50% of answer-all', '', 0)]),
+    ax.legend(handles=legend_handles([(NAVY, m, True, l, '', 0) for l, m in fmk.items()] + [(NAVY, '', False, 'open: 75% of answer-all', '', 0), (NAVY, '', True, 'filled: 50% of answer-all', '', 0)]),
               loc='upper left', fontsize=6, handletextpad=0.1, labelspacing=0.3)
     for i, ax in enumerate(axs): letter(ax, 'ABCDEF'[i], -0.12)
-    h = legend_handles([(BLUE, 'o', True, 'uncertainty only', '', 0), (NAVY, 'o', True, 'full signal set', '', 0), (OCHRE, 'o', False, 'MIMIC threshold kept', '', 0),
-                        (TEAL, 'o', True, 'threshold recalibrated locally', '', 0), (GREY, 'o', True, 'burden', '', 0), (GREY, '^', True, 'critical-miss rate', '', 0)])
+    h = legend_handles([(BLUE, 'o', True, 'uncertainty only', '', 0), (NAVY, 'o', True, 'four-signal', '', 0), (OCHRE, 'o', False, 'source-calibrated threshold', '', 0),
+                        (TEAL, 'o', True, 'locally recalibrated threshold', '', 0), (GREY, 'o', True, 'burden', '', 0), (GREY, '^', True, 'critical-miss rate', '', 0)])
     fig.legend(handles=h, loc='lower center', ncol=6, bbox_to_anchor=(0.5, -0.03), handletextpad=0.1, columnspacing=1.0)
     fig.tight_layout(h_pad=1.2, w_pad=1.4, rect=(0, 0.04, 1, 1))
     save(fig, 'Fig5_risk_control')
@@ -145,14 +145,14 @@ def fig6():
             col, lab, mk = GATE[gate]; q = g[(g.harm == harm) & (g.gate == gate)].sort_values('alpha')
             ax.plot(100*(1-q.referral), q.realised_risk, color=col, ls='--' if gate == 'oracle' else '-', lw=1.8 if gate == 'UDMS' else 1.3,
                     marker=mk, ms=3.6, mec=SURF, mew=0.4, zorder=4 if gate == 'UDMS' else 3)
-        ax.set_xlim(0, 100); ax.set_xlabel('answered automatically (%)'); ax.set_ylabel('realised burden' if harm == 'fn' else 'realised critical-miss rate')
+        ax.set_xlim(0, 100); ax.set_xlabel('answered automatically (%)'); ax.set_ylabel('realized burden' if harm == 'fn' else 'realized critical-miss rate')
         ax.set_ylim(0, None); letter(ax, 'AB'[j], -0.18)
     ax = fig.add_subplot(gs[2]); ax.grid(False); ax.spines['bottom'].set_visible(False)
     for k in ['L2D_U', 'ambiguity', 'entropy', 'U', 'UDMS']:
         col = GATE[k][0]; m = 100*g[(g.harm == 'fn') & (g.alpha == 0.03) & (g.gate == k)].referral.iloc[0]; c = 100*cg.loc[k, 'referral_cxp_recalibrated']
         ax.plot([0, 1], [m, c], color=col, lw=1.8 if k == 'UDMS' else 1.3, marker='o', ms=4, mec=SURF, mew=0.5)
     ax.set_xticks([0, 1], ['MIMIC', 'CheXpert\nPlus']); ax.tick_params(axis='x', length=0); ax.set_xlim(-0.25, 1.25)
-    ax.set_ylim(0, 100); ax.set_ylabel('escalated at burden 0.03 (%)'); ax.yaxis.grid(True, color=GRID); letter(ax, 'C', -0.3)
+    ax.set_ylim(0, 100); ax.set_ylabel('referred at burden 0.03 (%)'); ax.yaxis.grid(True, color=GRID); letter(ax, 'C', -0.3)
     fig.legend(handles=legend_handles([(GATE[k][0], GATE[k][2] or '', True, GATE[k][1], '--' if k == 'oracle' else '-', 1.4) for k in ['UDMS', 'U', 'entropy', 'ambiguity', 'L2D_U', 'oracle']]),
                loc='lower center', bbox_to_anchor=(0.5, -0.1), ncol=6, handlelength=1.8, handletextpad=0.3, columnspacing=1.1)
     save(fig, 'Fig6_efficiency')
@@ -169,18 +169,18 @@ def fig7():
     for i, (m, lo, hi, col) in enumerate([(q.delta_referral, q.lo, q.hi, NAVY), (f3.delta_referral_full_vs_U, f3.lo, f3.hi, NAVY), (c3.delta_referral, c3.lo, c3.hi, TEAL)]):
         dot(ax, 5-i, m*100, lo*100, hi*100, col, size=30, lw=1.8)
     for j in range(3): dot(ax, 2-j, sd.full_vs_binary.iloc[j]*100, color=BLUE, marker='D', size=22)
-    ax.set_yticks([5, 4, 3, 2, 1, 0], ['MIMIC cross-fit', 'untouched MIMIC', 'CheXpert Plus', 'fold assignment 1', 'fold assignment 2', 'fold assignment 3'])
-    ax.set_ylim(-0.6, 5.6); ax.set_xlim(-1.2, 1.0); ax.set_xlabel('Δ escalation, full vs uncertainty only (pp)'); ygrid_off(ax); letter(ax, 'A', -0.42)
+    ax.set_yticks([5, 4, 3, 2, 1, 0], ['MIMIC cross-fit', 'additional MIMIC', 'CheXpert Plus', 'fold assignment 1', 'fold assignment 2', 'fold assignment 3'])
+    ax.set_ylim(-0.6, 5.6); ax.set_xlim(-1.2, 1.0); ax.set_xlabel('Δ referral, four-signal vs uncertainty only (pp)'); ygrid_off(ax); letter(ax, 'A', -0.42)
     ax = axs[0, 1]; zero(ax); items = [('D adds to U', 'disagreement D'), ('M adds to U+D', 'missing context M'), ('S adds to U+D+M', 'severity S')]
     rr = [(lab, sel(rq)[sel(rq).contrast == key].iloc[0]) for key, lab in items]
     rr += [('ensemble E (on U)', sel(ens)[sel(ens).contrast == 'E adds to U'].iloc[0]), ('ensemble E (on all)', sel(ens)[sel(ens).contrast == 'E adds to U+D+M+S'].iloc[0])]
     for i, (lab, r) in enumerate(rr): dot(ax, len(rr)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, VERDICT.get(r.verdict_holm, GREY), size=28, lw=1.8)
-    ax.set_yticks(np.arange(len(rr))[::-1], [r[0] for r in rr]); ax.set_ylim(-0.6, len(rr)-0.4); ax.set_xlabel('Δ escalation when added (pp)'); ygrid_off(ax); letter(ax, 'B', -0.42)
+    ax.set_yticks(np.arange(len(rr))[::-1], [r[0] for r in rr]); ax.set_ylim(-0.6, len(rr)-0.4); ax.set_xlabel('Δ referral when added (pp)'); ygrid_off(ax); letter(ax, 'B', -0.42)
     ax = axs[1, 0]; zero(ax); names = {'mcar30': '30% withheld at random', 'mcar60': '60% withheld at random', 'struct40': '40% withheld, structured'}
     ys = []
     for i, sc in enumerate(['mcar30', 'mcar60', 'struct40']):
         m, lo, hi = parse_cost(sr[sr.scheme == sc].ask_context_budget_cost.iloc[0]); dot(ax, 4-i, m*1e4, lo*1e4, hi*1e4, OCHRE, size=28, lw=1.8); ys.append((4-i, names[sc]))
-    fa = res['fresh_ask_context']; dot(ax, 1, fa['delta_cost']*1e4, fa['lo']*1e4, fa['hi']*1e4, OCHRE, 's', 26, lw=1.8); ys.append((1, 'untouched MIMIC'))
+    fa = res['fresh_ask_context']; dot(ax, 1, fa['delta_cost']*1e4, fa['lo']*1e4, fa['hi']*1e4, OCHRE, 's', 26, lw=1.8); ys.append((1, 'additional MIMIC'))
     a3 = ca[ca.action == 'ask_context'].iloc[0]; dot(ax, 0, a3.delta_cost*1e4, a3.lo*1e4, a3.hi*1e4, TEAL, 'o', 28, lw=1.8); ys.append((0, 'CheXpert Plus, 30% withheld'))
     ax.set_yticks([y for y, _ in ys], [n for _, n in ys]); ax.set_ylim(-0.6, 4.6); ax.set_xlim(-12.5, 4.5); ax.set_xlabel('Δ routing cost when asking (×10$^{-4}$)'); ygrid_off(ax); letter(ax, 'C', -0.42)
     ax = axs[1, 1]; gh = grid[(grid.request == 'context') & (grid.budget == 0.3)]
@@ -209,7 +209,7 @@ def subgroups(rows, auroc, n, order, nice, name, xlim):
     q = rows[(rows.harm == 'fn') & (rows.alpha == 0.03)].set_index('group')
     ax = axs[1]; ax.barh(y, [100*q.loc[o, 'referral'] for o in order], color=OCHRE, height=0.58); ygrid_off(ax)
     for y0, o in zip(y, order): ax.text(100*q.loc[o, 'referral']+1.2, y0, f"{100*q.loc[o, 'referral']:.0f}", va='center', fontsize=6.2, color=INK2)
-    ax.set_xlabel('escalated (%)'); ax.set_xlim(0, 100*q.referral.max()*1.25); letter(ax, 'B', -0.04)
+    ax.set_xlabel('referred (%)'); ax.set_xlim(0, 100*q.referral.max()*1.25); letter(ax, 'B', -0.04)
     for ax, harm, alpha, s in [(axs[2], 'fn', 0.03, 'C'), (axs[3], 'severe', 0.10, 'D')]:
         qq = rows[(rows.harm == harm) & (rows.alpha == alpha)].set_index('group')
         ax.axvspan(1, 2, color=BRICK, alpha=0.07, lw=0); ax.axvline(1, color=BRICK, lw=1.0)
@@ -237,13 +237,13 @@ def figS4():
 # ============================================================== Supplement
 def figS1():
     d = rd('decision_curve'); fig, ax = plt.subplots(figsize=(4.0, 2.9))
-    sty = [('binary_UDMS', 'full signal set', NAVY, '-'), ('binary_U', 'uncertainty only', BLUE, '-'), ('binary_entropy', 'entropy', TEAL, '-'),
+    sty = [('binary_UDMS', 'four-signal', NAVY, '-'), ('binary_U', 'uncertainty only', BLUE, '-'), ('binary_entropy', 'entropy', TEAL, '-'),
            ('binary_L2D', 'surrogate learning-to-defer', BRICK, '-'), ('oracle_binary', 'oracle', GREY, '--'), ('random', 'random', GREY, ':')]
     for k, lab, col, ls in sty[::-1]:
         r = d[d.policy == k]; ax.plot(r.price_of_workload, r.net_benefit*1e3, color=col, ls=ls, lw=1.8 if k == 'binary_UDMS' else 1.3)
     ax.legend(handles=legend_handles([(c, '', True, l, ls, 1.5) for _, l, c, ls in sty]), loc='upper right', handlelength=2.2, fontsize=6.4)
     ax.set_xlabel('price of one unit of clinician workload'); ax.set_ylabel('net benefit (×10$^{-3}$)'); ax.set_ylim(-2, None)
-    save(fig, 'FigS1_decision_curve')
+    save(fig, 'FigS3_decision_curve')
 
 def figS2():
     mi = rd('classifier_per_label').set_index('label').auroc_image_only
@@ -258,7 +258,7 @@ def figS2():
             dx, dy, ha = off.get(lab, (3, 2, 'left'))
             ax.annotate(lab, (xs[lab], ext[lab]), xytext=(dx, dy), textcoords='offset points', fontsize=5.6, color=INK2, ha=ha)
         ax.set_xlim(0.58, 0.97); ax.set_ylim(0.45, 0.92); ax.set_xlabel('AUROC on MIMIC (cross-fitted)'); ax.set_ylabel('external AUROC'); letter(ax, s, -0.12)
-    save(fig, 'FigS2_transfer')
+    save(fig, 'FigS1_transfer')
 
 def figS3():
     nih = rd('external_nih_contrast'); nih = nih[nih.comparison == 'Full gate vs U']; cc = pd.read_csv(RX/'cxp_contrasts.csv'); cc = cc[cc.comparison == 'UDMS vs U']
@@ -267,10 +267,10 @@ def figS3():
         zero(ax); ct = ct.reset_index(drop=True)
         for i, r in ct.iterrows(): dot(ax, len(ct)-1-i, r.delta_referral*100, r.lo*100, r.hi*100, VERDICT.get(r.verdict_holm, GREY), size=26, lw=1.8)
         ax.set_yticks(np.arange(len(ct))[::-1], [('burden ' if h == 'fn' else 'critical ')+f'{a:.3g}' for h, a in zip(ct.harm, ct.alpha)]); ygrid_off(ax)
-        ax.set_xlabel('Δ escalation, full vs uncertainty only (pp)'); letter(ax, s, -0.3)
-    fig.legend(handles=legend_handles([(TEAL, 'o', True, 'fewer escalations', '', 0), (BRICK, 'o', True, 'more escalations', '', 0), (GREY, 'o', True, 'inconclusive (Holm)', '', 0)]),
+        ax.set_xlabel('Δ referral, four-signal vs uncertainty only (pp)'); letter(ax, s, -0.3)
+    fig.legend(handles=legend_handles([(TEAL, 'o', True, 'fewer referrals', '', 0), (BRICK, 'o', True, 'more referrals', '', 0), (GREY, 'o', True, 'inconclusive (Holm)', '', 0)]),
                loc='lower center', ncol=3, bbox_to_anchor=(0.5, -0.08), handletextpad=0.1)
-    save(fig, 'FigS3_external_contrasts')
+    save(fig, 'FigS2_external_contrasts')
 
 
 if __name__ == '__main__':
